@@ -47,7 +47,14 @@
 
 ## Changelog
 
-### v1.1 (Current)
+### v1.2 (Current)
+- Bugfixes:
+  - Fixed error in email in "About"
+  - Fixed error where Year Comparison fails when a temperature value is zero.
+- Tidied up the x-axis Year Comparison graph to split into months rather than weeks.
+- Changed from American date format (2/13) to British date format (13 Feb).
+
+### v1.1
 - Added printable styles for all visualization pages
 - Added a changelog page
 - Updated the logo on the 404 and "Coming Soon" pages

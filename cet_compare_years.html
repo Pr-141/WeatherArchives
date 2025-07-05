@@ -489,9 +489,9 @@ let comparisonType = 'annual';
 // Load CSV data
 function loadData() {
     Papa.parse(currentDataset, {
-        download: true, header: false, skipEmptyLines: true,
+        download: true, header: false, skipEmptyLines: false,
         complete: function(results) {
-            allData = results.data;
+            allData = results.data.filter(row => row.length >= 2 && row[0] && row[1] !== undefined);
             updateComparison();
         }
     });
@@ -526,7 +526,7 @@ function getYearData(year, type, specificMonth = null) {
         let dt = parseFlexibleDate(row[0]);
         let value = parseFloat(row[1]);
         
-        if (!dt || isNaN(value)) return;
+        if (!dt || (value === null || value === undefined || isNaN(value))) return;
         
         let dataYear = dt.getFullYear();
         let month = dt.getMonth();
@@ -714,7 +714,11 @@ function createComparisonChart(data1, data2, data3, year1, year2, year3, type) {
     }
     let layout = {
         title: title,
-        xaxis: { title: getXAxisTitle(type) },
+        xaxis: { 
+            title: getXAxisTitle(type),
+            tickvals: [1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335],
+            ticktext: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
         yaxis: { title: 'Temperature (°C)' },
         height: 500,
         margin: { l: 60, r: 30, t: 60, b: 60 },
@@ -732,20 +736,20 @@ function createTrace(data, year, color, type, traceName) {
         allData.forEach(row => {
             let dt = parseFlexibleDate(row[0]);
             let value = parseFloat(row[1]);
-            if (!dt || isNaN(value)) return;
+            if (!dt || (value === null || value === undefined || isNaN(value))) return;
             let dataYear = dt.getFullYear();
             if (dataYear === year) {
                 let month = dt.getMonth();
                 let day = dt.getDate();
-                let dateStr = `${month + 1}/${day}`;
+                let dateStr = `${day} ${getMonthName(month)}`;
                 dailyData[dateStr] = value;
             }
         });
         for (let month = 1; month <= 12; month++) {
             let daysInMonth = new Date(year, month, 0).getDate();
             for (let day = 1; day <= daysInMonth; day++) {
-                let dateStr = `${month}/${day}`;
-                if (dailyData[dateStr]) {
+                let dateStr = `${day} ${getMonthName(month - 1)}`;
+                if (dateStr in dailyData) {
                     x.push(dateStr);
                     y.push(dailyData[dateStr]);
                 }
@@ -764,7 +768,7 @@ function createTrace(data, year, color, type, traceName) {
         allData.forEach(row => {
             let dt = parseFlexibleDate(row[0]);
             let value = parseFloat(row[1]);
-            if (!dt || isNaN(value)) return;
+            if (!dt || (value === null || value === undefined || isNaN(value))) return;
             let dataYear = dt.getFullYear();
             let month = dt.getMonth();
             let day = dt.getDate();
