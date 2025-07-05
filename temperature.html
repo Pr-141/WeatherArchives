@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Temperature Analysis - WeatherArchives</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="banner">
+  <a href="index.html">
+    <img src="logo.svg" alt="WeatherArchives Logo" class="banner-logo">
+  </a>
+</div>
+
+<nav class="nav-bar">
+  <div class="nav-item">
+    <a href="temperature.html" class="nav-link">Temperature</a>
+    <div class="dropdown">
+      <a href="temperature.html">Overview</a>
+      <a href="cet_mean_daily_extremes.html">Daily Extremes</a>
+      <a href="cet_monthly_averages.html">Monthly Averages</a>
+      <a href="cet_seasonal_patterns.html">Seasonal Patterns</a>
+      <a href="cet_yearly_trends.html">Yearly Trends</a>
+      <a href="cet_compare_years.html">Compare Years</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Precipitation</a>
+    <div class="dropdown">
+      <a href="wip.html">Monthly Totals</a>
+      <a href="wip.html">Seasonal Totals</a>
+      <a href="wip.html">Yearly Totals</a>
+      <a href="wip.html">Compare Years</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Sunshine</a>
+    <div class="dropdown">
+      <a href="wip.html">Monthly Hours</a>
+      <a href="wip.html">Seasonal Hours</a>
+      <a href="wip.html">Yearly Totals</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Fun & Learning</a>
+    <div class="dropdown">
+      <a href="wip.html">Creating your own weather forecast</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="about.html" class="nav-link">About</a>
+    <div class="dropdown">
+      <a href="about.html">Data Sources</a>
+      <a href="about.html">Methodology</a>
+      <a href="about.html">References</a>
+      <a href="about.html">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="title-banner">
+  <h1>Temperature Analysis</h1>
+  <p>Comprehensive analysis of Central England Temperature data from 1772 to present</p>
+</div>
+
+<div class="container">
+  <div class="overview-section">
+    <h2>Understanding Temperature Patterns</h2>
+    <p>Temperature is one of the most fundamental climate variables, and the Central England Temperature (CET) record provides an exceptional window into how temperatures have varied over time. Our analysis tools allow you to explore temperature patterns at different time scales, from daily extremes to long-term trends.</p>
+  </div>
+
+  <div class="info-section">
+    <h3>Why Central England Temperature?</h3>
+    <p>The CET record is particularly valuable because:</p>
+    <ul>
+      <li><strong>Long-term perspective:</strong> Over 250 years of continuous data provides context for current climate changes</li>
+      <li><strong>Geographic significance:</strong> Central England represents a temperate climate zone that's sensitive to global climate variations</li>
+      <li><strong>Data quality:</strong> Carefully maintained and quality-controlled measurements</li>
+      <li><strong>Climate research:</strong> Widely used by scientists to study climate change and natural variability</li>
+    </ul>
+  </div>
+
+  <div class="info-section">
+    <h3>Interactive Features</h3>
+    <p>Our visualizations include:</p>
+    <ul>
+      <li><strong>Interactive charts:</strong> Click on data points for detailed information</li>
+      <li><strong>Year range filtering:</strong> Focus on specific time periods of interest</li>
+      <li><strong>Trend analysis:</strong> Linear regression lines to identify long-term patterns</li>
+      <li><strong>Extreme value highlighting:</strong> Automatically identify record-breaking years</li>
+      <li><strong>Export capabilities:</strong> Download high-resolution images for presentations or reports</li>
+    </ul>
+  </div>
+
+  <div class="analysis-grid">
+    <div class="analysis-card">
+      <div class="card-header">
+        <h3>📅 Daily Extremes</h3>
+        <span class="card-subtitle">Record-breaking temperatures by day</span>
+      </div>
+      <div class="card-content">
+        <p>Discover which years set temperature records for each day of the year. This visualization shows the warmest and coldest temperatures ever recorded for every day, spanning over 250 years of data.</p>
+        <ul class="feature-list">
+          <li>Search for records in specific years</li>
+          <li>Compare mean vs maximum temperatures</li>
+          <li>Interactive hover information</li>
+          <li>Export high-resolution images</li>
+        </ul>
+      </div>
+      <div class="card-actions">
+        <a href="cet_mean_daily_extremes.html" class="btn-primary">Explore Daily Extremes</a>
+      </div>
+    </div>
+
+    <div class="analysis-card">
+      <div class="card-header">
+        <h3>📊 Monthly Averages</h3>
+        <span class="card-subtitle">Month-by-month temperature analysis</span>
+      </div>
+      <div class="card-content">
+        <p>Analyze how monthly temperatures have changed over time. Select individual months to see detailed trends, with options to show trend lines, extreme years, and filter by year ranges.</p>
+        <ul class="feature-list">
+          <li>Month-by-month analysis</li>
+          <li>Trend line visualization</li>
+          <li>Year range filtering</li>
+          <li>Extreme year highlighting</li>
+        </ul>
+      </div>
+      <div class="card-actions">
+        <a href="cet_monthly_averages.html" class="btn-primary">Explore Monthly Averages</a>
+      </div>
+    </div>
+
+    <div class="analysis-card">
+      <div class="card-header">
+        <h3>🌱 Seasonal Patterns</h3>
+        <span class="card-subtitle">Seasonal temperature variations</span>
+      </div>
+      <div class="card-content">
+        <p>Compare seasonal temperature patterns across different years. This analysis focuses on how spring, summer, autumn, and winter temperatures have evolved over the centuries.</p>
+        <ul class="feature-list">
+          <li>Season-by-season analysis</li>
+          <li>Long-term seasonal trends</li>
+          <li>Interactive season selection</li>
+          <li>Climate change indicators</li>
+        </ul>
+      </div>
+      <div class="card-actions">
+        <a href="cet_seasonal_patterns.html" class="btn-primary">Explore Seasonal Patterns</a>
+      </div>
+    </div>
+
+    <div class="analysis-card">
+      <div class="card-header">
+        <h3>📈 Annual Trends</h3>
+        <span class="card-subtitle">Long-term climate patterns</span>
+      </div>
+      <div class="card-content">
+        <p>Examine the long-term trajectory of annual temperatures. This comprehensive view shows how yearly averages have changed over the entire dataset, providing insights into climate change.</p>
+        <ul class="feature-list">
+          <li>Annual temperature trends</li>
+          <li>Linear regression analysis</li>
+          <li>Record year identification</li>
+          <li>Climate change detection</li>
+        </ul>
+      </div>
+      <div class="card-actions">
+        <a href="cet_yearly_trends.html" class="btn-primary">Explore Annual Trends</a>
+      </div>
+    </div>
+
+    <div class="analysis-card">
+      <div class="card-header">
+        <h3>🔍 Compare Years</h3>
+        <span class="card-subtitle">Side-by-side year comparisons</span>
+      </div>
+      <div class="card-content">
+        <p>Compare temperature patterns across different years with interactive visualizations. Analyze annual, monthly, seasonal, or daily patterns to identify climate trends and anomalies.</p>
+        <ul class="feature-list">
+          <li>Multi-year comparisons</li>
+          <li>Statistical analysis</li>
+          <li>Interactive charts</li>
+          <li>Difference calculations</li>
+        </ul>
+      </div>
+      <div class="card-actions">
+        <a href="cet_compare_years.html" class="btn-primary">Compare Years</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h3>Key Insights from Temperature Data</h3>
+    <div class="insights-grid">
+      <div class="insight-item">
+        <h4>🌡️ Temperature Range</h4>
+        <p>The CET record shows temperatures ranging from approximately -10°C in winter to over 30°C in summer, with significant year-to-year variability.</p>
+      </div>
+      <div class="insight-item">
+        <h4>📈 Warming Trend</h4>
+        <p>Long-term analysis reveals a gradual warming trend, particularly evident in recent decades, consistent with global climate change patterns.</p>
+      </div>
+      <div class="insight-item">
+        <h4>🌍 Climate Context</h4>
+        <p>Central England's temperate climate makes it an excellent indicator of broader climate changes affecting the North Atlantic region.</p>
+      </div>
+      <div class="insight-item">
+        <h4>📊 Data Quality</h4>
+        <p>The CET record is one of the world's longest continuous instrumental temperature records, providing exceptional data quality and consistency.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h3>How to Use These Tools</h3>
+    <p>Each visualization offers different perspectives on temperature patterns:</p>
+    <ul>
+      <li><strong>Start with Daily Extremes</strong> to understand the range of temperatures experienced throughout the year</li>
+      <li><strong>Use Monthly Averages</strong> to see how specific months have changed over time</li>
+      <li><strong>Explore Seasonal Patterns</strong> to understand how seasons have evolved</li>
+      <li><strong>Examine Annual Trends</strong> for the big picture of long-term climate change</li>
+    </ul>
+    <p>All tools include interactive features like year range filtering, trend lines, and export capabilities to help you analyze the data in detail.</p>
+  </div>
+
+  <div class="info-section">
+    <h3>Getting Started</h3>
+    <p>Begin your exploration by:</p>
+    <ol>
+      <li><strong>Daily Extremes:</strong> See which years set temperature records for each day</li>
+      <li><strong>Monthly Averages:</strong> Compare how monthly temperatures have changed over time</li>
+      <li><strong>Seasonal Patterns:</strong> Analyze how seasons have evolved across centuries</li>
+      <li><strong>Annual Trends:</strong> Examine the long-term climate trajectory</li>
+      <li><strong>Compare Years:</strong> Side-by-side analysis of different years</li>
+    </ol>
+    <p>Each visualization offers different insights into our climate history. Use the navigation menu above to explore different aspects of the temperature record.</p>
+  </div>
+
+  <div class="info-section">
+    <h3>Data Sources & Methodology</h3>
+    <p>This website uses the official Central England Temperature dataset, maintained by the UK Met Office. The data represents area-averaged temperatures for central England, providing a representative sample of the region's climate.</p>
+    <p><a href="about.html" class="info-link">Learn more about our data sources and methodology →</a></p>
+  </div>
+</div>
+
+<script>
+// Add interactive elements
+document.addEventListener('DOMContentLoaded', function() {
+  // Add hover effects to analysis cards
+  const analysisCards = document.querySelectorAll('.analysis-card');
+  analysisCards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-5px)';
+      this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
+    });
+  });
+});
+</script>
+</body>
+</html> 

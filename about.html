@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>About - WeatherArchives Data Sources & Methodology</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="banner">
+  <a href="index.html">
+    <img src="logo.svg" alt="WeatherArchives Logo" class="banner-logo">
+  </a>
+</div>
+
+<nav class="nav-bar">
+  <div class="nav-item">
+    <a href="temperature.html" class="nav-link">Temperature</a>
+    <div class="dropdown">
+      <a href="temperature.html">Overview</a>
+      <a href="cet_mean_daily_extremes.html">Daily Extremes</a>
+      <a href="cet_monthly_averages.html">Monthly Averages</a>
+      <a href="cet_seasonal_patterns.html">Seasonal Patterns</a>
+      <a href="cet_yearly_trends.html">Yearly Trends</a>
+      <a href="cet_compare_years.html">Compare Years</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Precipitation</a>
+    <div class="dropdown">
+      <a href="wip.html">Monthly Totals</a>
+      <a href="wip.html">Seasonal Totals</a>
+      <a href="wip.html">Yearly Totals</a>
+      <a href="wip.html">Compare Years</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Sunshine</a>
+    <div class="dropdown">
+      <a href="wip.html">Monthly Hours</a>
+      <a href="wip.html">Seasonal Hours</a>
+      <a href="wip.html">Yearly Totals</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Fun & Learning</a>
+    <div class="dropdown">
+      <a href="wip.html">Creating your own weather forecast</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="about.html" class="nav-link">About</a>
+    <div class="dropdown">
+      <a href="about.html">Data Sources</a>
+      <a href="about.html">Methodology</a>
+      <a href="about.html">References</a>
+      <a href="about.html">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="title-banner">
+  <h1>About WeatherArchives</h1>
+  <p>Data sources, methodology, and references</p>
+</div>
+
+<div class="container">
+  <a href="index.html" class="back-link">← Back to Home</a>
+
+  <div class="content-section">
+    <h2>Data Sources</h2>
+    <p>Our weather data comes from authoritative meteorological sources and historical records:</p>
+    
+    <h3>Central England Temperature (CET) Data</h3>
+    <ul>
+      <li><strong>Source:</strong> <a href="https://www.metoffice.gov.uk/hadobs/hadcet/" class="source-link">Met Office Hadley Centre</a></li>
+      <li><strong>Coverage:</strong> 1659 to present</li>
+      <li><strong>Resolution:</strong> Daily mean, maximum, and minimum temperatures</li>
+      <li><strong>Quality:</strong> Quality-controlled and homogenized dataset</li>
+    </ul>
+
+    <!--
+    <h3>Additional Meteorological Data</h3>
+    <ul>
+      <li><strong>Precipitation:</strong> UK Met Office rainfall data</li>
+      <li><strong>Sunshine:</strong> UK sunshine duration records</li>
+      <li><strong>Pressure:</strong> Atmospheric pressure measurements</li>
+      <li><strong>Wind:</strong> Wind speed and direction data</li>
+    </ul>
+    -->
+
+    <h3>Data Processing</h3>
+    <p>All data undergoes rigorous quality control procedures including:</p>
+    <ul>
+      <li>Outlier detection and removal</li>
+      <li>Missing data interpolation</li>
+      <li>Homogenization for station changes</li>
+      <li>Cross-validation with multiple sources</li>
+    </ul>
+  </div>
+
+  <div class="content-section">
+    <h2>Methodology</h2>
+    <p>Our analysis methods follow established climatological practices:</p>
+    
+    <div class="methodology-grid">
+      <div class="methodology-card">
+        <h4>Statistical Analysis</h4>
+        <p>We employ robust statistical methods including trend analysis, anomaly detection, and seasonal decomposition to identify patterns in weather data.</p>
+      </div>
+      
+      <div class="methodology-card">
+        <h4>Quality Control</h4>
+        <p>Multiple validation steps ensure data integrity, including cross-referencing with multiple sources and automated error detection.</p>
+      </div>
+      
+      <div class="methodology-card">
+        <h4>Visualization Standards</h4>
+        <p>Charts and graphs follow meteorological conventions with clear labeling, appropriate scales, and accessibility considerations.</p>
+      </div>
+      
+      <div class="methodology-card">
+        <h4>Climate Context</h4>
+        <p>All analyses include historical context and climate change considerations to provide meaningful interpretation of current weather patterns.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <h2>References</h2>
+    <!--<p>Our work builds upon the research and data collection efforts of many organizations:</p>
+    
+    <h3>Primary Sources</h3>
+    <ul>
+      <li>Parker, D.E., et al. (1992). "A new daily central England temperature series, 1772-1991." <em>International Journal of Climatology</em>, 12(4), 317-342.</li>
+      <li>Met Office Hadley Centre. "Central England Temperature Data." <a href="https://www.metoffice.gov.uk/hadobs/hadcet/" class="source-link">https://www.metoffice.gov.uk/hadobs/hadcet/</a></li>
+      <li>UK Met Office. "Climate Data and Information." <a href="https://www.metoffice.gov.uk/climate" class="source-link">https://www.metoffice.gov.uk/climate</a></li>
+    </ul>
+
+    <h3>Methodological References</h3>
+    <ul>
+      <li>World Meteorological Organization. "Guide to Climatological Practices." WMO-No. 100, 2018.</li>
+      <li>IPCC. "Climate Change 2021: The Physical Science Basis." Working Group I contribution to the Sixth Assessment Report.</li>
+      <li>Jones, P.D., et al. (2012). "Hemispheric and large-scale land-surface air temperature variations: An extensive revision and an update to 2010." <em>Journal of Geophysical Research</em>, 117(D5).</li>
+    </ul>-->
+    <h3>Software and Tools</h3>
+    <ul>
+      <li>Plotly.js for interactive visualizations</li>
+      <li>PapaParse for CSV data processing</li>
+      <li>Python for data analysis and processing</li>
+      <li>R for statistical analysis and climate modeling</li>
+    </ul>
+  </div>
+
+  <div class="content-section">
+    <h2>Contact</h2>
+    <p>We welcome questions, suggestions, and collaboration opportunities:</p>
+    
+    <div class="contact-info">
+      <div class="contact-item">
+        <i>📧</i>
+        <div>
+          <strong>Email:</strong><br>
+          <a href="mailto:pr.141.59.141@gmail.com" class="source-link">info@weatherarchives.com</a>
+        </div>
+      </div>
+      <!--
+      <div class="contact-item">
+        <i>🌐</i>
+        <div>
+          <strong>Website:</strong><br>
+          <a href="https://weatherarchives.com" class="source-link">weatherarchives.com</a>
+        </div>
+      </div>
+      <div class="contact-item">
+        <i>📊</i>
+        <div>
+          <strong>Data Requests:</strong><br>
+          <a href="mailto:data@weatherarchives.com" class="source-link">data@weatherarchives.com</a>
+        </div>
+      </div>
+      <div class="contact-item">
+        <i>🔬</i>
+        <div>
+          <strong>Research Collaboration:</strong><br>
+          <a href="mailto:research@weatherarchives.com" class="source-link">research@weatherarchives.com</a>
+        </div>
+      </div>
+      -->
+    </div>
+
+    <h3>Feedback</h3>
+    <p>We value your feedback on our data visualizations, analysis methods, and website functionality. Please don't hesitate to reach out with suggestions for improvements or new features you'd like to see.</p>
+  </div>
+</div>
+
+<script>
+// Add smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  });
+});
+</script>
+</body>
+</html> 

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CET Monthly Mean Temperatures (Interactive)</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+<h2>CET Monthly Mean Temperatures (by Year)</h2>
+<div id="cet-grid" style="width: 98vw; height: 85vh;"></div>
+
+<script>
+// --- Simulate monthly data for 12 months (replace with your own real data) ---
+const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
+const colors = [
+    'blue', 'deepskyblue', 'violet', 'orchid', 'limegreen', 'gold',
+    'orange', 'coral', 'brown', 'sienna', 'slategray', 'darkblue'
+];
+
+// Make fake data (replace with AJAX CSV read if you want real!)
+let n_years = 254;
+let years = [];
+for (let i = 1772; i < 1772+n_years; ++i) years.push(i);
+
+// Build the traces, one per month
+let traces = [];
+for (let m = 0; m < 12; ++m) {
+    // Simulate: actual data - use your real array here
+    let y = years.map((yr, j) => 5 + 7 * Math.sin((2*Math.PI*(j+2*m))/n_years) + 0.5*Math.random());
+    traces.push({
+        x: years,
+        y: y,
+        mode: 'lines',
+        name: months[m],
+        line: { color: colors[m], width: 2 },
+        xaxis: 'x'+(m+1),
+        yaxis: 'y'+(m+1),
+        showlegend: false
+    });
+}
+
+// Setup subplot layout: 3 rows x 4 columns
+let layout = {
+    title: "CET Monthly Mean Temperatures (by Year)",
+    grid: { rows: 3, columns: 4, pattern: 'independent' },
+    // Remove the custom annotation loop!
+    // The following line sets titles for all subplots:
+    subplot_titles: months,
+    height: 900,
+    width: 1600,
+    margin: { l: 30, r: 15, t: 70, b: 30 }
+};
+
+for (let m = 0; m < 12; ++m) {
+    layout['xaxis'+(m+1)] = {
+        title: m >= 8 ? 'Year' : '',
+        showgrid: true,
+        zeroline: false,
+        tickfont: {size: 10}
+    };
+    layout['yaxis'+(m+1)] = {
+        title: (m%4 === 0) ? 'Temp (°C)' : '',
+        showgrid: true,
+        zeroline: false,
+        tickfont: {size: 10}
+    };
+    layout['annotations'] = layout['annotations'] || [];
+    layout['annotations'].push({
+        xref: 'x'+(m+1), yref: 'paper',
+        x: 0.5*(years[0]+years[years.length-1]),
+        y: 1.05,
+        text: months[m],
+        font: {color: colors[m], size: 14, family: "sans-serif", weight: 'bold'},
+        showarrow: false,
+        xanchor: 'center',
+        yanchor: 'bottom'
+    });
+}
+
+// Render the plot
+Plotly.newPlot('cet-grid', traces, layout, {responsive: true});
+
+</script>
+</body>
+</html>

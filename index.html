@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WeatherArchives - Central England Temperature Archives</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="banner">
+  <a href="index.html">
+    <img src="logo.svg" alt="WeatherArchives Logo" class="banner-logo">
+  </a>
+</div>
+
+<nav class="nav-bar">
+  <div class="nav-item">
+    <a href="temperature.html" class="nav-link">Temperature</a>
+    <div class="dropdown">
+      <a href="temperature.html">Overview</a>
+      <a href="cet_mean_daily_extremes.html">Daily Extremes</a>
+      <a href="cet_monthly_averages.html">Monthly Averages</a>
+      <a href="cet_seasonal_patterns.html">Seasonal Patterns</a>
+      <a href="cet_yearly_trends.html">Yearly Trends</a>
+      <a href="cet_compare_years.html">Compare Years</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Precipitation</a>
+    <div class="dropdown">
+      <a href="wip.html">Monthly Totals</a>
+      <a href="wip.html">Seasonal Totals</a>
+      <a href="wip.html">Yearly Totals</a>
+      <a href="wip.html">Compare Years</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Sunshine</a>
+    <div class="dropdown">
+      <a href="wip.html">Monthly Hours</a>
+      <a href="wip.html">Seasonal Hours</a>
+      <a href="wip.html">Yearly Totals</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Fun & Learning</a>
+    <div class="dropdown">
+      <a href="wip.html">Creating your own weather forecast</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="about.html" class="nav-link">About</a>
+    <div class="dropdown">
+      <a href="about.html">Data Sources</a>
+      <a href="about.html">Methodology</a>
+      <a href="about.html">References</a>
+      <a href="about.html">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="title-banner">
+  <h1>Welcome to WeatherArchives</h1>
+  <p>Exploring Central England Temperature Archives - One of the World's Longest Climate Records</p>
+</div>
+
+<div class="container">
+  <div class="hero-section">
+    <div class="hero-content">
+      <p>Explore comprehensive weather data analysis and visualization tools for Central England Temperature records.</p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>🌡️ Temperature Analysis</h3>
+          <p>Comprehensive temperature data analysis with daily extremes, monthly patterns, seasonal variations, and long-term trends.</p>
+          <a href="temperature.html" class="feature-link">Explore Temperature Data →</a>
+        </div>
+        
+        <div class="feature-card">
+          <h3>🌧️ Precipitation Data</h3>
+          <p>Coming soon: Rainfall and precipitation analysis tools for understanding precipitation patterns and trends.</p>
+          <a href="#" class="feature-link">Coming Soon →</a>
+        </div>
+        
+        <div class="feature-card">
+          <h3>☀️ Sunshine Hours</h3>
+          <p>Coming soon: Sunshine duration analysis to explore solar radiation patterns and seasonal variations.</p>
+          <a href="#" class="feature-link">Coming Soon →</a>
+        </div>
+        
+        <div class="feature-card">
+          <h3>🎓 Fun & Learning</h3>
+          <p>Educational resources and interactive tools for understanding weather forecasting and climate science.</p>
+          <a href="#" class="feature-link">Coming Soon →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h3>About WeatherArchives</h3>
+    <p>WeatherArchives provides comprehensive weather data analysis and visualization tools, starting with the Central England Temperature (CET) record - one of the world's longest continuous climate datasets.</p>
+    <p>Our interactive tools help researchers, students, and weather enthusiasts explore climate patterns, identify trends, and understand long-term changes in weather data.</p>
+  </div>
+
+  <div class="info-section">
+    <h3>Getting Started</h3>
+    <p>Begin your exploration by clicking on "Temperature" in the navigation menu above, or use the feature cards to dive directly into our temperature analysis tools.</p>
+    <p>Each visualization offers different insights into climate patterns, from daily extremes to long-term trends spanning over 250 years of data.</p>
+  </div>
+
+  <div class="info-section">
+    <h3>Data Sources</h3>
+    <p>Our analysis uses official datasets maintained by meteorological organizations, including the Central England Temperature record from the UK Met Office.</p>
+    <p><a href="about.html" class="info-link">Learn more about our data sources and methodology →</a></p>
+  </div>
+</div>
+
+<script>
+// Add some interactive elements
+document.addEventListener('DOMContentLoaded', function() {
+  // Add hover effects to feature cards
+  const featureCards = document.querySelectorAll('.feature-card');
+  featureCards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-5px)';
+      this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
+    });
+  });
+});
+</script>
+</body>
+</html> 

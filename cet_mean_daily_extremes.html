@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CET Daily Extremes by Year Search</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="banner">
+  <a href="index.html">
+    <img src="logo.svg" alt="WeatherArchives Logo" class="banner-logo">
+  </a>
+</div>
+
+<nav class="nav-bar">
+  <div class="nav-item">
+    <a href="temperature.html" class="nav-link">Temperature</a>
+    <div class="dropdown">
+      <a href="temperature.html">Overview</a>
+      <a href="cet_mean_daily_extremes.html">Daily Extremes</a>
+      <a href="cet_monthly_averages.html">Monthly Averages</a>
+      <a href="cet_seasonal_patterns.html">Seasonal Patterns</a>
+      <a href="cet_yearly_trends.html">Yearly Trends</a>
+      <a href="cet_compare_years.html">Compare Years</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="#" class="nav-link">Precipitation</a>
+    <div class="dropdown">
+      <a href="#">Monthly Totals</a>
+      <a href="#">Seasonal Totals</a>
+      <a href="#">Yearly Totals</a>
+      <a href="#">Compare Years</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="#" class="nav-link">Sunshine</a>
+    <div class="dropdown">
+      <a href="#">Monthly Hours</a>
+      <a href="#">Seasonal Hours</a>
+      <a href="#">Yearly Totals</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="#" class="nav-link">Fun & Learning</a>
+    <div class="dropdown">
+      <a href="#">Creating your own weather forecast</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="about.html" class="nav-link">About</a>
+    <div class="dropdown">
+      <a href="about.html">Data Sources</a>
+      <a href="about.html">Methodology</a>
+      <a href="about.html">References</a>
+      <a href="about.html">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="title-banner">
+  <h1>Central England Temperature Archives</h1>
+  <p>Explore daily temperature extremes and historical records</p>
+</div>
+
+<div class="container">
+  <div class="controls">
+    <div class="control-group">
+      <label>Dataset:</label>
+      <select id="dataset-select">
+        <option value="MeanTempCET.csv">Mean Temperature</option>
+        <option value="MaxTempCET.csv">Maximum Temperature</option>
+      </select>
+    </div>
+    
+    <div class="control-group">
+      <label>Highlight records set in year:</label>
+      <input type="number" id="year-input" min="1700" max="2100" step="1" placeholder="e.g., 2023">
+    </div>
+    
+    <button onclick="updateHighlights()">Search</button>
+    <button id="export-btn">Download Image</button>
+    <span id="num-records"></span>
+  </div>
+
+  <div class="plot-container">
+    <div id="mainplot"></div>
+  </div>
+
+  <div class="records-container">
+    <div id="record-list"></div>
+  </div>
+
+  <div class="info-section">
+    <h3>Daily Temperature Extremes</h3>
+    <p>This visualization displays the warmest and coldest temperatures ever recorded for each day of the year in the Central England Temperature (CET) dataset. The red line shows the highest temperature for each date, the blue line shows the lowest, and the shaded area represents the full historical range.</p>
+    <ul>
+      <li><strong>Green markers:</strong> Highlight days where the selected year set a new record (warmest or coldest for that date).</li>
+      <li><strong>Black dotted line:</strong> Shows the actual daily temperatures for the selected year.</li>
+      <li><strong>Record list:</strong> Displays all records set in the selected year below the chart.</li>
+      <li>You can switch between mean and maximum temperature datasets using the dropdown above.</li>
+      <li>Use the search box to highlight records for a specific year, or download the chart as an image.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// Helpers
+function pad2(n){return n<10?'0'+n:n;}
+function monthDayStr(d){return pad2(d.getMonth()+1)+'-'+pad2(d.getDate());}
+function prettyDate(d){return d.toLocaleDateString('en-GB',{month:'short',day:'numeric'});}
+function parseFlexibleDate(s){
+  if(!s) return null;
+  if(s.includes('-')){let d=new Date(s);if(!isNaN(d))return d;}
+  if(s.includes('/')){
+    let p=s.split('/');
+    if(p.length===3){
+      let [dd,mm,yy]=p.map(n=>+n);
+      if(!isNaN(dd)&&!isNaN(mm)&&!isNaN(yy))return new Date(yy,mm-1,dd);
+    }
+  }
+  return null;
+}
+
+// Day labels
+let month_days=[], hover_texts=[];
+for(let i=0;i<366;++i){
+  let dt=new Date(2020,0,1); dt.setDate(dt.getDate()+i);
+  month_days.push(monthDayStr(dt));
+  hover_texts.push(prettyDate(dt));
+}
+
+// State
+let df_rows=[];
+let warmest={},coldest={},warmest_years={},coldest_years={};
+let currentDataset='MeanTempCET.csv';
+
+// Load CSV
+function loadAndPlot(){
+  Papa.parse(currentDataset,{
+    download:true,header:false,skipEmptyLines:true,
+    complete:function(res){
+      df_rows=res.data.map(r=>{
+        let d=parseFlexibleDate(r[0]);
+        return {date:d,value:+r[1],year:d?d.getFullYear():NaN,mmdd:d?monthDayStr(d):""};
+      }).filter(r=>r.date && !isNaN(r.value));
+      processAndPlot();
+    }
+  });
+}
+
+function processAndPlot(){
+  warmest={};coldest={};warmest_years={};coldest_years={};
+  for(let md of month_days){
+    let recs=df_rows.filter(r=>r.mmdd===md);
+    if(!recs.length){warmest[md]=NaN;coldest[md]=NaN;warmest_years[md]=[];coldest_years[md]=[];continue;}
+    let max=Math.max(...recs.map(r=>r.value));
+    let min=Math.min(...recs.map(r=>r.value));
+    warmest[md]=max;
+    coldest[md]=min;
+    warmest_years[md]=recs.filter(r=>r.value===max).map(r=>r.year);
+    coldest_years[md]=recs.filter(r=>r.value===min).map(r=>r.year);
+  }
+  plotAndHighlight(null);
+}
+
+function plotAndHighlight(searchYear){
+  let x=month_days.map((_,i)=>i+1);
+  let y_warm=month_days.map(md=>warmest[md]);
+  let y_cold=month_days.map(md=>coldest[md]);
+  let warm_years=month_days.map(md=>warmest_years[md]);
+  let cold_years=month_days.map(md=>coldest_years[md]);
+
+  let htext_warm=month_days.map((md,i)=>hover_texts[i]+(isNaN(y_warm[i])?'':`<br>${y_warm[i].toFixed(2)}°C<br>(Years: ${warm_years[i].join(', ')})`));
+  let htext_cold=month_days.map((md,i)=>hover_texts[i]+(isNaN(y_cold[i])?'':`<br>${y_cold[i].toFixed(2)}°C<br>(Years: ${cold_years[i].join(', ')})`));
+
+  let highlight_x=[],highlight_y=[],highlight_htxt=[],y_selected=null,htext_selected=null;
+  if(searchYear){
+    y_selected=month_days.map(md=>{
+      let recs=df_rows.filter(r=>r.mmdd===md && r.year===searchYear);
+      return recs.length?recs[0].value:NaN;
+    });
+    htext_selected=month_days.map((md,i)=>
+      hover_texts[i]+(isNaN(y_selected[i])?'':`<br>${y_selected[i].toFixed(2)}°C`));
+    for(let i=0;i<month_days.length;++i){
+      if(warm_years[i].includes(searchYear)){
+        highlight_x.push(x[i]); highlight_y.push(y_warm[i]);
+        highlight_htxt.push(`${hover_texts[i]}<br><b>Warmest</b><br>${y_warm[i].toFixed(2)}°C`);
+      }
+      if(cold_years[i].includes(searchYear)){
+        highlight_x.push(x[i]); highlight_y.push(y_cold[i]);
+        highlight_htxt.push(`${hover_texts[i]}<br><b>Coldest</b><br>${y_cold[i].toFixed(2)}°C`);
+      }
+    }
+  }
+
+  let fill={x:x.concat(x.slice().reverse()),y:y_warm.concat(y_cold.slice().reverse()),
+    fill:'toself',fillcolor:'rgba(128,128,128,0.15)',
+    line:{color:'rgba(0,0,0,0)'},showlegend:false,type:'scatter',mode:'lines'};
+
+  let traceWarm={x,y:y_warm,mode:'lines',name:'Warmest Mean',line:{color:'red'},
+    text:htext_warm,hovertemplate:'%{text}<extra></extra>'};
+
+  let traceCold={x,y:y_cold,mode:'lines',name:'Coldest Mean',line:{color:'blue'},
+    text:htext_cold,hovertemplate:'%{text}<extra></extra>'};
+
+  let highlight={
+    x:highlight_x,y:highlight_y,mode:'markers',name:`Records in ${searchYear}`,
+    marker:{color:'limegreen',size:13,line:{color:'black',width:2}},
+    hovertemplate:'%{text}<extra></extra>',
+    text:highlight_htxt,showlegend:highlight_x.length>0};
+
+  let selectedTrace=searchYear && y_selected ? {
+    x,y:y_selected,mode:'lines',name:`Mean in ${searchYear}`,
+    line:{color:'black',dash:'dot'},
+    text:htext_selected,
+    hovertemplate:'%{text}<extra></extra>'
+  } : null;
+
+  let layout={
+    title:`Warmest and Coldest ${currentDataset.includes('Max')?'Max':'Mean'} Temperatures per Day`,
+    xaxis:{tickvals:[1,32,60,91,121,152,182,213,244,274,305,335],
+      ticktext:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+      title:'Month'},
+    yaxis:{title:'Temp (°C)',range:[Math.min(...y_cold)-2,Math.max(...y_warm)+2]},
+    showlegend:true,hovermode:'x unified'
+  };
+
+  let data=[fill,traceWarm,traceCold];
+  if(searchYear && selectedTrace)data.push(selectedTrace);
+  if(searchYear && highlight_x.length)data.push(highlight);
+
+  Plotly.newPlot('mainplot',data,layout,{responsive:true});
+
+  document.getElementById('export-btn').onclick=function(){
+    Plotly.downloadImage('mainplot',{
+      format:'png',
+      filename:`cet_daily_${currentDataset.includes('Max')?'max':'mean'}`,
+      height:800,width:1200,scale:2
+    });
+  };
+
+  // Record list
+  let recDiv=document.getElementById('record-list');
+  let numDiv=document.getElementById('num-records');
+  if(searchYear){
+    let recs=[];
+    for(let i=0;i<month_days.length;++i){
+      if(warm_years[i].includes(searchYear))
+        recs.push(`<span style="color:limegreen">${hover_texts[i]}: ${y_warm[i].toFixed(2)}°C (Warmest)</span>`);
+      if(cold_years[i].includes(searchYear))
+        recs.push(`<span style="color:limegreen">${hover_texts[i]}: ${y_cold[i].toFixed(2)}°C (Coldest)</span>`);
+    }
+    recDiv.innerHTML=recs.length?`<b>Records in ${searchYear}:</b><br>${recs.join('<br>')}`:`<i>No records in ${searchYear}.</i>`;
+    numDiv.textContent=` (${recs.length} records)`;
+  }else{
+    recDiv.innerHTML='<b>List of records:</b><br><i>Select a year to view the records of a particular year</i>';
+    numDiv.textContent='';
+  }
+}
+
+function updateHighlights(){
+  let y=parseInt(document.getElementById('year-input').value);
+  if(isNaN(y)){plotAndHighlight(null);return;}
+  plotAndHighlight(y);
+}
+
+document.getElementById('year-input').addEventListener('keydown',e=>{
+  if(e.key==='Enter')updateHighlights();
+});
+document.getElementById('dataset-select').addEventListener('change',e=>{
+  currentDataset=e.target.value;
+  loadAndPlot();
+});
+
+// Initial load
+loadAndPlot();
+</script>
+</body>
+</html>

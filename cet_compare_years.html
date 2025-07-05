@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CET Year Comparison Tool</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<link rel="stylesheet" href="style.css">
+<style>
+.comparison-controls {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.year-selection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.year-group {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 2px solid #e9ecef;
+}
+
+.year-group h4 {
+  color: #2c3e50;
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.year-inputs {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.year-inputs input {
+  width: 80px;
+  padding: 0.5rem;
+  border: 2px solid #e1e8ed;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.year-inputs label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.comparison-type {
+  margin-bottom: 1.5rem;
+}
+
+.comparison-type label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-right: 1rem;
+}
+
+.comparison-type select {
+  padding: 0.5rem;
+  border: 2px solid #e1e8ed;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.comparison-specifics {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+}
+
+.comparison-specifics label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-right: 1rem;
+}
+
+.comparison-specifics select {
+  padding: 0.5rem;
+  border: 2px solid #e1e8ed;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.plot-container {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+#cet-comparison {
+  width: 100%;
+  height: 60vh;
+  border-radius: 8px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  border-left: 4px solid #667eea;
+}
+
+.stat-card h4 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.info-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+.info-section h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 0.5rem;
+}
+
+.info-section p {
+  line-height: 1.6;
+  color: #555;
+  margin-bottom: 0.75rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-block;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-block;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+</style>
+</head>
+<body>
+<div class="banner">
+  <a href="index.html">
+    <img src="logo.svg" alt="WeatherArchives Logo" class="banner-logo">
+  </a>
+</div>
+
+<nav class="nav-bar">
+  <div class="nav-item">
+    <a href="temperature.html" class="nav-link">Temperature</a>
+    <div class="dropdown">
+      <a href="temperature.html">Overview</a>
+      <a href="cet_mean_daily_extremes.html">Daily Extremes</a>
+      <a href="cet_monthly_averages.html">Monthly Averages</a>
+      <a href="cet_seasonal_patterns.html">Seasonal Patterns</a>
+      <a href="cet_yearly_trends.html">Yearly Trends</a>
+      <a href="cet_compare_years.html">Compare Years</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Precipitation</a>
+    <div class="dropdown">
+      <a href="wip.html">Monthly Totals</a>
+      <a href="wip.html">Seasonal Totals</a>
+      <a href="wip.html">Yearly Totals</a>
+      <a href="wip.html">Compare Years</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Sunshine</a>
+    <div class="dropdown">
+      <a href="wip.html">Monthly Hours</a>
+      <a href="wip.html">Seasonal Hours</a>
+      <a href="wip.html">Yearly Totals</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Fun & Learning</a>
+    <div class="dropdown">
+      <a href="wip.html">Creating your own weather forecast</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="about.html" class="nav-link">About</a>
+    <div class="dropdown">
+      <a href="about.html">Data Sources</a>
+      <a href="about.html">Methodology</a>
+      <a href="about.html">References</a>
+      <a href="about.html">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="title-banner">
+  <h1>Central England Temperature Year Comparison</h1>
+  <p>Compare temperature patterns across different years and time periods</p>
+</div>
+
+<div class="container">
+  <div class="comparison-controls">
+    <div class="comparison-type">
+      <label>Comparison Type:</label>
+      <select id="comparison-type">
+        <option value="annual">Annual Averages</option>
+        <option value="monthly">Monthly Averages</option>
+        <option value="seasonal">Seasonal Averages</option>
+      </select>
+    </div>
+    
+    <div class="comparison-specifics" id="monthly-controls" style="display: none;">
+      <p><em>Select months for each year below</em></p>
+    </div>
+    
+    <div class="comparison-specifics" id="seasonal-controls" style="display: none;">
+      <label>Season to Compare:</label>
+      <select id="season-select">
+        <option value="Winter">Winter</option>
+        <option value="Spring">Spring</option>
+        <option value="Summer">Summer</option>
+        <option value="Autumn">Autumn</option>
+      </select>
+    </div>
+    
+    <div class="year-selection">
+      <div class="year-group">
+        <h4>Year 1</h4>
+        <div class="year-inputs">
+          <label>Year:</label>
+          <input type="number" id="year1" min="1772" max="2025" value="2020" placeholder="e.g., 2020">
+        </div>
+        <div class="month-inputs" id="month1-inputs" style="display: none;">
+          <label>Month:</label>
+          <select id="month1-select">
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="year-group">
+        <h4>Year 2</h4>
+        <div class="year-inputs">
+          <label>Year:</label>
+          <input type="number" id="year2" min="1772" max="2025" value="2023" placeholder="e.g., 2023">
+        </div>
+        <div class="month-inputs" id="month2-inputs" style="display: none;">
+          <label>Month:</label>
+          <select id="month2-select">
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="year-group">
+        <h4>Year 3 (Optional)</h4>
+        <div class="year-inputs">
+          <label>Year:</label>
+          <input type="number" id="year3" min="1772" max="2025" value="" placeholder="e.g., 2010">
+        </div>
+        <div class="month-inputs" id="month3-inputs" style="display: none;">
+          <label>Month:</label>
+          <select id="month3-select">
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <div class="controls">
+      <div class="control-group">
+        <label>Dataset:</label>
+        <select id="dataset-select">
+          <option value="MeanTempCET.csv">Mean Temperature</option>
+          <option value="MaxTempCET.csv">Maximum Temperature</option>
+        </select>
+      </div>
+      
+      <button onclick="updateComparison()" class="btn-primary">Compare Years</button>
+      <button onclick="clearComparison()" class="btn-secondary">Clear</button>
+      <button id="export-comparison-btn" class="btn-primary">Download Image</button>
+    </div>
+  </div>
+
+  <div class="plot-container">
+    <div id="cet-comparison"></div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h4>Year 1 Statistics</h4>
+      <div class="stat-value" id="year1-avg">-</div>
+      <div class="stat-label">Average Temperature</div>
+      <div class="stat-value" id="year1-max">-</div>
+      <div class="stat-label">Maximum Temperature</div>
+      <div class="stat-value" id="year1-min">-</div>
+      <div class="stat-label">Minimum Temperature</div>
+    </div>
+    
+    <div class="stat-card">
+      <h4>Year 2 Statistics</h4>
+      <div class="stat-value" id="year2-avg">-</div>
+      <div class="stat-label">Average Temperature</div>
+      <div class="stat-value" id="year2-max">-</div>
+      <div class="stat-label">Maximum Temperature</div>
+      <div class="stat-value" id="year2-min">-</div>
+      <div class="stat-label">Minimum Temperature</div>
+    </div>
+    
+    <div class="stat-card">
+      <h4>Comparison</h4>
+      <div class="stat-value" id="difference">-</div>
+      <div class="stat-label">Temperature Difference</div>
+      <div class="stat-value" id="percent-change">-</div>
+      <div class="stat-label">Percent Change</div>
+      <div class="stat-value" id="warmer-year">-</div>
+      <div class="stat-label">Warmer</div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h3>Year Comparison Analysis</h3>
+    <p>This tool allows you to compare temperature patterns across different years, helping you identify climate trends, anomalies, and historical patterns. You can compare annual averages, monthly patterns, seasonal variations, or daily temperature profiles.</p>
+    <p><strong>Comparison Types:</strong></p>
+    <ul>
+      <li><strong>Annual Averages:</strong> Compare the overall temperature for entire years</li>
+      <li><strong>Monthly Averages:</strong> See how specific months compare across years</li>
+      <li><strong>Seasonal Averages:</strong> Compare seasonal patterns (spring, summer, autumn, winter)</li>
+      <li><strong>Daily Patterns:</strong> Compare daily temperature profiles throughout the year</li>
+    </ul>
+  </div>
+
+  <div class="info-section">
+    <h3>How to Use</h3>
+    <ul>
+      <li><strong>Step 1:</strong> Select the type of comparison you want to make: <b>Annual</b> (full year), <b>Monthly</b> (specific months), or <b>Seasonal</b> (specific seasons).</li>
+      <li><strong>Step 2:</strong> Enter the years you want to compare (Year 1 and Year 2 are required, Year 3 is optional).</li>
+      <li><strong>Step 3 (Monthly):</strong> For monthly comparison, select a different month for each year if desired (e.g., compare July 2020 to August 2023).</li>
+      <li><strong>Step 3 (Seasonal):</strong> For seasonal comparison, select a season. <b>Winter</b> spans December of the previous year through February of the selected year (e.g., Winter 2024 = Dec 2023, Jan 2024, Feb 2024).</li>
+      <li><strong>Step 4:</strong> Choose your dataset (Mean or Maximum temperature).</li>
+      <li><strong>Step 5:</strong> Click <b>Compare Years</b> to generate the visualization.</li>
+      <li><strong>Step 6:</strong> Review the interactive chart and the statistics cards below. The stat cards show average, maximum, and minimum temperatures for each selection, and highlight which year/month/season was warmer.</li>
+      <li>You can clear your selections at any time with the <b>Clear</b> button or download the chart as an image.</li>
+    </ul>
+    <p>The tool automatically calculates key statistics and displays them for each comparison. For seasonal comparisons, the chart and stats reflect the correct months for each season.</p>
+  </div>
+
+  <div class="info-section">
+    <h3>Climate Context</h3>
+    <p>Year-to-year comparisons are valuable for understanding climate variability and identifying trends. This tool helps researchers, students, and weather enthusiasts explore how temperatures have changed over time and identify notable climate events or patterns.</p>
+    <p><strong>Applications:</strong></p>
+    <ul>
+      <li>Identify climate change signals by comparing recent years to historical periods</li>
+      <li>Study the impact of climate events (El Niño, volcanic eruptions, etc.)</li>
+      <li>Analyze seasonal and monthly variations across different years</li>
+      <li>Compare extreme weather years to understand temperature anomalies</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// Global variables
+let currentDataset = 'MeanTempCET.csv';
+let allData = null;
+let comparisonType = 'annual';
+
+// Load CSV data
+function loadData() {
+    Papa.parse(currentDataset, {
+        download: true, header: false, skipEmptyLines: true,
+        complete: function(results) {
+            allData = results.data;
+            updateComparison();
+        }
+    });
+}
+
+// Parse flexible date format
+function parseFlexibleDate(dateStr) {
+    if (!dateStr) return null;
+    if (dateStr.includes('-')) { 
+        let dt = new Date(dateStr); 
+        if (!isNaN(dt)) return dt; 
+    }
+    if (dateStr.includes('/')) {
+        let dmy = dateStr.split('/'); 
+        if (dmy.length === 3) {
+            let [dd, mm, yyyy] = dmy; 
+            dd=+dd; mm=+mm; yyyy=+yyyy;
+            if (isNaN(dd) || isNaN(mm) || isNaN(yyyy)) return null;
+            return new Date(yyyy, mm-1, dd);
+        }
+    }
+    return null;
+}
+
+// Get year data based on comparison type
+function getYearData(year, type, specificMonth = null) {
+    if (!allData) return null;
+    
+    let yearData = [];
+    
+    allData.forEach(row => {
+        let dt = parseFlexibleDate(row[0]);
+        let value = parseFloat(row[1]);
+        
+        if (!dt || isNaN(value)) return;
+        
+        let dataYear = dt.getFullYear();
+        let month = dt.getMonth();
+        let dayOfYear = Math.floor((dt - new Date(dataYear, 0, 0)) / (1000 * 60 * 60 * 24));
+        
+        if (dataYear === year) {
+            if (type === 'annual') {
+                yearData.push(value);
+            } else if (type === 'monthly') {
+                if (specificMonth !== null) {
+                    // Only include data for the specific month
+                    if (month === specificMonth) {
+                        yearData.push({ month: month, value: value, day: dt.getDate() });
+                    }
+                } else {
+                    yearData.push({ month: month, value: value });
+                }
+            } else if (type === 'seasonal') {
+                let season = getSeason(month);
+                yearData.push({ season: season, value: value });
+            } else if (type === 'daily') {
+                yearData.push({ day: dayOfYear, value: value });
+            }
+        }
+    });
+    
+    return yearData;
+}
+
+// Get season from month
+function getSeason(month) {
+    if (month >= 2 && month <= 4) return 'Spring';
+    if (month >= 5 && month <= 7) return 'Summer';
+    if (month >= 8 && month <= 10) return 'Autumn';
+    return 'Winter';
+}
+
+// Calculate statistics
+function calculateStats(data) {
+    if (!data || data.length === 0) return null;
+    
+    let values = data.map(d => typeof d === 'number' ? d : d.value);
+    let avg = values.reduce((a, b) => a + b, 0) / values.length;
+    let max = Math.max(...values);
+    let min = Math.min(...values);
+    
+    return { avg: avg.toFixed(2), max: max.toFixed(2), min: min.toFixed(2) };
+}
+
+// Update comparison visualization
+function updateComparison() {
+    let year1 = parseInt(document.getElementById('year1').value);
+    let year2 = parseInt(document.getElementById('year2').value);
+    let year3 = parseInt(document.getElementById('year3').value) || null;
+    
+    if (!year1 || !year2) {
+        alert('Please enter valid years for comparison');
+        return;
+    }
+    
+    let type = document.getElementById('comparison-type').value;
+    comparisonType = type;
+    
+    // Get selected months for monthly comparison
+    let month1 = null, month2 = null, month3 = null;
+    if (type === 'monthly') {
+        month1 = parseInt(document.getElementById('month1-select').value);
+        month2 = parseInt(document.getElementById('month2-select').value);
+        month3 = year3 ? parseInt(document.getElementById('month3-select').value) : null;
+    }
+    
+    let data1 = getYearData(year1, type, month1);
+    let data2 = getYearData(year2, type, month2);
+    let data3 = year3 ? getYearData(year3, type, month3) : null;
+    
+    if (!data1 || !data2) {
+        alert('No data available for the selected years');
+        return;
+    }
+    
+    // Calculate statistics
+    let stats1 = calculateStats(data1);
+    let stats2 = calculateStats(data2);
+    let stats3 = data3 ? calculateStats(data3) : null;
+    
+    // Update statistics display and card titles
+    if (stats1) {
+        document.getElementById('year1-avg').textContent = stats1.avg + '°C';
+        document.getElementById('year1-max').textContent = stats1.max + '°C';
+        document.getElementById('year1-min').textContent = stats1.min + '°C';
+        // Update the card title to show the actual year and month
+        let year1Title = `${year1} Statistics`;
+        if (type === 'monthly') {
+            let month1Name = getMonthName(parseInt(document.getElementById('month1-select').value));
+            year1Title = `${month1Name} ${year1} Statistics`;
+        }
+        document.querySelector('.stat-card h4').textContent = year1Title;
+    }
+    
+    if (stats2) {
+        document.getElementById('year2-avg').textContent = stats2.avg + '°C';
+        document.getElementById('year2-max').textContent = stats2.max + '°C';
+        document.getElementById('year2-min').textContent = stats2.min + '°C';
+        // Update the second card title to show the actual year and month
+        let year2Title = `${year2} Statistics`;
+        if (type === 'monthly') {
+            let month2Name = getMonthName(parseInt(document.getElementById('month2-select').value));
+            year2Title = `${month2Name} ${year2} Statistics`;
+        }
+        document.querySelectorAll('.stat-card h4')[1].textContent = year2Title;
+    }
+    
+    // Calculate comparison statistics
+    if (stats1 && stats2) {
+        let diff = (parseFloat(stats2.avg) - parseFloat(stats1.avg)).toFixed(2);
+        let percentChange = ((diff / parseFloat(stats1.avg)) * 100).toFixed(1);
+        let label1 = `${year1}`;
+        let label2 = `${year2}`;
+        if (type === 'monthly') {
+            label1 = `${getMonthName(parseInt(document.getElementById('month1-select').value))} ${year1}`;
+            label2 = `${getMonthName(parseInt(document.getElementById('month2-select').value))} ${year2}`;
+        } else if (type === 'seasonal') {
+            let season = document.getElementById('season-select').value;
+            label1 = `${season} ${year1}`;
+            label2 = `${season} ${year2}`;
+        }
+        let warmerLabelValue = parseFloat(stats1.avg) > parseFloat(stats2.avg) ? label1 : label2;
+        document.getElementById('difference').textContent = diff + '°C';
+        document.getElementById('percent-change').textContent = percentChange + '%';
+        document.getElementById('warmer-year').textContent = warmerLabelValue;
+        // Update the label for warmer comparison
+        let warmerLabel = 'Warmer Year';
+        if (type === 'monthly') {
+            warmerLabel = 'Warmer Month';
+        } else if (type === 'seasonal') {
+            warmerLabel = 'Warmer Season';
+        }
+        document.querySelectorAll('.stat-card .stat-label')[8].textContent = warmerLabel;
+    }
+    
+    // Create visualization
+    createComparisonChart(data1, data2, data3, year1, year2, year3, type);
+}
+
+// Create comparison chart
+function createComparisonChart(data1, data2, data3, year1, year2, year3, type) {
+    let traces = [];
+    // Prepare data for plotting
+    let label1 = `${year1}`;
+    let label2 = `${year2}`;
+    let label3 = year3 ? `${year3}` : null;
+    if (type === 'monthly') {
+        label1 = `${getMonthName(parseInt(document.getElementById('month1-select').value))} ${year1}`;
+        label2 = `${getMonthName(parseInt(document.getElementById('month2-select').value))} ${year2}`;
+        if (year3) label3 = `${getMonthName(parseInt(document.getElementById('month3-select').value))} ${year3}`;
+    } else if (type === 'seasonal') {
+        let season = document.getElementById('season-select').value;
+        label1 = `${season} ${year1}`;
+        label2 = `${season} ${year2}`;
+        if (year3) label3 = `${season} ${year3}`;
+    }
+    let trace1 = createTrace(data1, year1, '#667eea', type, label1);
+    let trace2 = createTrace(data2, year2, '#e74c3c', type, label2);
+    traces.push(trace1, trace2);
+    if (data3) {
+        let trace3 = createTrace(data3, year3, '#27ae60', type, label3);
+        traces.push(trace3);
+    }
+    // Create title with month/season information for monthly/seasonal comparison
+    let title = `${getComparisonTitle(type)} Comparison`;
+    if (type === 'monthly') {
+        title += ` (${label1} vs ${label2}`;
+        if (year3) {
+            title += ` vs ${label3}`;
+        }
+        title += ')';
+    } else if (type === 'seasonal') {
+        title += ` (${label1} vs ${label2}`;
+        if (year3) {
+            title += ` vs ${label3}`;
+        }
+        title += ')';
+    } else {
+        title += ` (${year1} vs ${year2}${year3 ? ' vs ' + year3 : ''})`;
+    }
+    let layout = {
+        title: title,
+        xaxis: { title: getXAxisTitle(type) },
+        yaxis: { title: 'Temperature (°C)' },
+        height: 500,
+        margin: { l: 60, r: 30, t: 60, b: 60 },
+        hovermode: 'x unified',
+        showlegend: true
+    };
+    Plotly.newPlot('cet-comparison', traces, layout, {responsive: true});
+}
+
+// Create trace for plotting
+function createTrace(data, year, color, type, traceName) {
+    let x = [], y = [];
+    if (type === 'annual') {
+        let dailyData = {};
+        allData.forEach(row => {
+            let dt = parseFlexibleDate(row[0]);
+            let value = parseFloat(row[1]);
+            if (!dt || isNaN(value)) return;
+            let dataYear = dt.getFullYear();
+            if (dataYear === year) {
+                let month = dt.getMonth();
+                let day = dt.getDate();
+                let dateStr = `${month + 1}/${day}`;
+                dailyData[dateStr] = value;
+            }
+        });
+        for (let month = 1; month <= 12; month++) {
+            let daysInMonth = new Date(year, month, 0).getDate();
+            for (let day = 1; day <= daysInMonth; day++) {
+                let dateStr = `${month}/${day}`;
+                if (dailyData[dateStr]) {
+                    x.push(dateStr);
+                    y.push(dailyData[dateStr]);
+                }
+            }
+        }
+    } else if (type === 'monthly') {
+        if (data && data.length > 0) {
+            data.sort((a, b) => a.day - b.day);
+            data.forEach(item => {
+                x.push(item.day);
+                y.push(item.value);
+            });
+        }
+    } else if (type === 'seasonal') {
+        let seasonalData = {};
+        allData.forEach(row => {
+            let dt = parseFlexibleDate(row[0]);
+            let value = parseFloat(row[1]);
+            if (!dt || isNaN(value)) return;
+            let dataYear = dt.getFullYear();
+            let month = dt.getMonth();
+            let day = dt.getDate();
+            let season = getSeason(month);
+            // For winter, include Dec of previous year and Jan/Feb of current year
+            let selectedSeason = document.getElementById('season-select').value;
+            if (selectedSeason === 'Winter') {
+                if ((dataYear === year && (month === 0 || month === 1)) || (dataYear === year - 1 && month === 11)) {
+                    // month 11 = Dec, 0 = Jan, 1 = Feb
+                    let labelMonth = month === 11 ? 'Dec' : (month === 0 ? 'Jan' : 'Feb');
+                    let dateStr = `${labelMonth} ${day}`;
+                    seasonalData[dateStr] = value;
+                }
+            } else {
+                if (dataYear === year && season === selectedSeason) {
+                    let labelMonth = getMonthName(month);
+                    let dateStr = `${labelMonth} ${day}`;
+                    seasonalData[dateStr] = value;
+                }
+            }
+        });
+        // For winter, order Dec, Jan, Feb
+        let keys = Object.keys(seasonalData);
+        if (document.getElementById('season-select').value === 'Winter') {
+            const order = ['Dec', 'Jan', 'Feb'];
+            keys.sort((a, b) => {
+                let [ma] = a.split(' ');
+                let [mb] = b.split(' ');
+                let ia = order.indexOf(ma);
+                let ib = order.indexOf(mb);
+                if (ia !== ib) return ia - ib;
+                // If same month, sort by day
+                let da = parseInt(a.split(' ')[1]);
+                let db = parseInt(b.split(' ')[1]);
+                return da - db;
+            });
+        } else {
+            // Otherwise, sort by month order then day
+            keys.sort((a, b) => {
+                let [ma, da] = a.split(' ');
+                let [mb, db] = b.split(' ');
+                let ia = getMonthNameIndex(ma);
+                let ib = getMonthNameIndex(mb);
+                if (ia !== ib) return ia - ib;
+                return parseInt(da) - parseInt(db);
+            });
+        }
+        keys.forEach(dateStr => {
+            x.push(dateStr);
+            y.push(seasonalData[dateStr]);
+        });
+    }
+    return {
+        x: x,
+        y: y,
+        mode: 'lines+markers',
+        name: traceName,
+        line: { color: color, width: 3 },
+        marker: { size: 6, color: color }
+    };
+}
+
+// Get comparison title
+function getComparisonTitle(type) {
+    switch(type) {
+        case 'annual': return 'Daily Temperature Patterns';
+        case 'monthly': return 'Monthly Temperature';
+        case 'seasonal': return 'Seasonal Temperature';
+        default: return 'Temperature';
+    }
+}
+
+// Get X-axis title
+function getXAxisTitle(type) {
+    switch(type) {
+        case 'annual': return 'Date (Month/Day)';
+        case 'monthly': return 'Date (Month/Day)';
+        case 'seasonal': return 'Date (Month/Day)';
+        default: return 'Time';
+    }
+}
+
+// Get month names
+function getMonthName(month) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months[month] || month;
+}
+
+// Get month name index
+function getMonthNameIndex(monthName) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months.indexOf(monthName);
+}
+
+// Clear comparison
+function clearComparison() {
+    document.getElementById('year1').value = '';
+    document.getElementById('year2').value = '';
+    document.getElementById('year3').value = '';
+    
+    // Reset month selectors to January
+    document.getElementById('month1-select').value = '0';
+    document.getElementById('month2-select').value = '0';
+    document.getElementById('month3-select').value = '0';
+    
+    // Clear statistics
+    document.getElementById('year1-avg').textContent = '-';
+    document.getElementById('year1-max').textContent = '-';
+    document.getElementById('year1-min').textContent = '-';
+    document.getElementById('year2-avg').textContent = '-';
+    document.getElementById('year2-max').textContent = '-';
+    document.getElementById('year2-min').textContent = '-';
+    document.getElementById('difference').textContent = '-';
+    document.getElementById('percent-change').textContent = '-';
+    document.getElementById('warmer-year').textContent = '-';
+    
+    // Reset card titles to default
+    document.querySelectorAll('.stat-card h4')[0].textContent = 'Year 1 Statistics';
+    document.querySelectorAll('.stat-card h4')[1].textContent = 'Year 2 Statistics';
+    // Always set the label above min value to 'Minimum Temperature' for both year stat cards
+    document.querySelectorAll('.stat-card .stat-label')[3].textContent = 'Minimum Temperature';
+    document.querySelectorAll('.stat-card .stat-label')[7].textContent = 'Minimum Temperature';
+    // Set the comparison card's last label to 'Warmer'
+    document.querySelectorAll('.stat-card .stat-label')[11].textContent = 'Warmer';
+    
+    // Clear plot
+    Plotly.newPlot('cet-comparison', [], {title: 'Select years to compare'});
+}
+
+// Event listeners
+document.getElementById('dataset-select').addEventListener('change', e => {
+    currentDataset = e.target.value;
+    loadData();
+});
+
+document.getElementById('comparison-type').addEventListener('change', e => {
+    comparisonType = e.target.value;
+    
+    // Show/hide specific controls based on comparison type
+    let monthlyControls = document.getElementById('monthly-controls');
+    let seasonalControls = document.getElementById('seasonal-controls');
+    let month1Inputs = document.getElementById('month1-inputs');
+    let month2Inputs = document.getElementById('month2-inputs');
+    let month3Inputs = document.getElementById('month3-inputs');
+    
+    if (comparisonType === 'monthly') {
+        monthlyControls.style.display = 'block';
+        seasonalControls.style.display = 'none';
+        month1Inputs.style.display = 'block';
+        month2Inputs.style.display = 'block';
+        month3Inputs.style.display = 'block';
+    } else if (comparisonType === 'seasonal') {
+        monthlyControls.style.display = 'none';
+        seasonalControls.style.display = 'block';
+        month1Inputs.style.display = 'none';
+        month2Inputs.style.display = 'none';
+        month3Inputs.style.display = 'none';
+    } else {
+        monthlyControls.style.display = 'none';
+        seasonalControls.style.display = 'none';
+        month1Inputs.style.display = 'none';
+        month2Inputs.style.display = 'none';
+        month3Inputs.style.display = 'none';
+    }
+    
+    if (allData) {
+        updateComparison();
+    }
+});
+
+// Add event listeners for month and season selection
+document.getElementById('month1-select').addEventListener('change', e => {
+    if (allData && comparisonType === 'monthly') {
+        updateComparison();
+    }
+});
+
+document.getElementById('month2-select').addEventListener('change', e => {
+    if (allData && comparisonType === 'monthly') {
+        updateComparison();
+    }
+});
+
+document.getElementById('month3-select').addEventListener('change', e => {
+    if (allData && comparisonType === 'monthly') {
+        updateComparison();
+    }
+});
+
+document.getElementById('season-select').addEventListener('change', e => {
+    if (allData && comparisonType === 'seasonal') {
+        updateComparison();
+    }
+});
+
+// Export functionality
+document.getElementById('export-comparison-btn').onclick = function() {
+    Plotly.downloadImage('cet-comparison', {
+        format: 'png',
+        filename: 'cet_year_comparison',
+        height: 500, width: 1200, scale: 2
+    });
+};
+
+// Initial load
+loadData();
+</script>
+</body>
+</html> 

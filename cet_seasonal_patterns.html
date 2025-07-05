@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CET Seasonal Temperature Patterns</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<link rel="stylesheet" href="style.css">
+<style>
+.plot-container {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+#cet-seasonal {
+  width: 100%;
+  height: 45vh;
+  border-radius: 8px;
+}
+
+.info-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+.info-section h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 0.5rem;
+}
+
+.info-section p {
+  line-height: 1.6;
+  color: #555;
+  margin-bottom: 0.75rem;
+}
+
+.season-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.season-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  border-left: 4px solid #667eea;
+}
+
+.season-card h4 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.season-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+</style>
+</head>
+<body>
+<div class="banner">
+  <a href="index.html">
+    <img src="logo.svg" alt="WeatherArchives Logo" class="banner-logo">
+  </a>
+</div>
+
+<nav class="nav-bar">
+  <div class="nav-item">
+    <a href="temperature.html" class="nav-link">Temperature</a>
+    <div class="dropdown">
+      <a href="temperature.html">Overview</a>
+      <a href="cet_mean_daily_extremes.html">Daily Extremes</a>
+      <a href="cet_monthly_averages.html">Monthly Averages</a>
+      <a href="cet_seasonal_patterns.html">Seasonal Patterns</a>
+      <a href="cet_yearly_trends.html">Yearly Trends</a>
+      <a href="cet_compare_years.html">Compare Years</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Precipitation</a>
+    <div class="dropdown">
+      <a href="wip.html">Monthly Totals</a>
+      <a href="wip.html">Seasonal Totals</a>
+      <a href="wip.html">Yearly Totals</a>
+      <a href="wip.html">Compare Years</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Sunshine</a>
+    <div class="dropdown">
+      <a href="wip.html">Monthly Hours</a>
+      <a href="wip.html">Seasonal Hours</a>
+      <a href="wip.html">Yearly Totals</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Fun & Learning</a>
+    <div class="dropdown">
+      <a href="wip.html">Creating your own weather forecast</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="about.html" class="nav-link">About</a>
+    <div class="dropdown">
+      <a href="about.html">Data Sources</a>
+      <a href="about.html">Methodology</a>
+      <a href="about.html">References</a>
+      <a href="about.html">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="title-banner">
+  <h1>Central England Temperature Seasonal Patterns</h1>
+  <p>Explore seasonal temperature trends and climate patterns</p>
+</div>
+
+<div class="container">
+  <div class="controls">
+    <div class="control-group">
+      <label>Dataset:</label>
+      <select id="dataset-select">
+        <option value="MeanTempCET.csv">Mean Temperature</option>
+        <option value="MaxTempCET.csv">Maximum Temperature</option>
+      </select>
+    </div>
+    
+    <div class="control-group">
+      <label>Season:</label>
+      <select id="season-select">
+        <option value="0">Spring (MAM)</option>
+        <option value="1">Summer (JJA)</option>
+        <option value="2">Autumn (SON)</option>
+        <option value="3">Winter (DJF)</option>
+      </select>
+    </div>
+    
+    <button id="export-seasonal-btn">Download Image</button>
+  </div>
+  
+  <div class="controls">
+    <div class="control-group">
+      <label>Year Range:</label>
+      <input type="number" id="year-start" min="1659" max="2025" value="1659" style="width: 80px;">
+      <span style="color: #666;">to</span>
+      <input type="number" id="year-end" min="1659" max="2025" value="2025" style="width: 80px;">
+      <button onclick="applyYearFilter()">Apply Filter</button>
+    </div>
+  </div>
+  
+  <div class="controls">
+    <div class="control-group">
+      <label style="margin-right: 1rem;">Show:</label>
+      <label style="margin-right: 1rem;">
+        <input type="checkbox" id="show-trend" checked> Trend Line
+      </label>
+      <label style="margin-right: 1rem;">
+        <input type="checkbox" id="show-extremes" checked> Max/Min Years
+      </label>
+      <label>
+        <input type="checkbox" id="show-data-points" checked> Data Points
+      </label>
+    </div>
+  </div>
+
+  <div class="plot-container">
+    <div id="cet-seasonal"></div>
+  </div>
+  
+  <div class="info-section">
+    <h3>Seasonal Temperature Analysis</h3>
+    <p>This visualization shows temperature trends for the selected season over the entire dataset. Use the dropdown above to select different seasons and explore how temperatures have changed over time for each season of the year.</p>
+    <p><strong>Interactive Features:</strong> Click on any data point to see detailed information about that year's temperature. The visualization will show annotations with the exact year and temperature value.</p>
+    <p><strong>Trend Analysis:</strong> Look for patterns in how the selected season has changed over time. Some seasons may show more dramatic warming or cooling trends than others.</p>
+  </div>
+
+  <div class="info-section">
+    <h3>Seasonal Climate Patterns</h3>
+    <p>This visualization shows how Central England temperatures have changed across the four seasons over time. Each subplot represents a different season, allowing you to see long-term trends and variations in seasonal weather patterns.</p>
+    
+    <div class="season-info">
+      <div class="season-card">
+        <h4>Spring (MAM)</h4>
+        <p>March, April, May - The warming season with increasing daylight and temperatures.</p>
+      </div>
+      <div class="season-card">
+        <h4>Summer (JJA)</h4>
+        <p>June, July, August - The warmest season with peak temperatures and longest days.</p>
+      </div>
+      <div class="season-card">
+        <h4>Autumn (SON)</h4>
+        <p>September, October, November - The cooling season with decreasing temperatures and daylight.</p>
+      </div>
+      <div class="season-card">
+        <h4>Winter (DJF)</h4>
+        <p>December, January, February - The coldest season with shortest days and lowest temperatures.</p>
+      </div>
+    </div>
+    
+    <h3>How to Use This Visualization</h3>
+    <p><strong>Interactive Features:</strong> Click on any data point to see detailed information about that year's seasonal temperature. The visualization will show annotations with the exact year and temperature value.</p>
+    <p><strong>Trend Analysis:</strong> Look for long-term trends in each season. Are winters getting warmer? Are summers becoming more extreme? The data spans centuries, allowing for comprehensive climate analysis.</p>
+    <p><strong>Seasonal Comparison:</strong> Compare how different seasons have changed over time. Some seasons may show more dramatic changes than others.</p>
+  </div>
+</div>
+
+<script>
+// --- Shared config ---
+const seasons = ["Spring (MAM)", "Summer (JJA)", "Autumn (SON)", "Winter (DJF)"];
+const seasonColors = ["violet", "orange", "brown", "cyan"];
+const seasonMonths = [[3,4,5], [6,7,8], [9,10,11], [12,1,2]];
+
+// --- Flexible date parsing for both formats ---
+function parseFlexibleDate(dateStr) {
+    if (!dateStr) return null;
+    if (dateStr.includes('-')) { let dt = new Date(dateStr); if (!isNaN(dt)) return dt; }
+    if (dateStr.includes('/')) {
+        let dmy = dateStr.split('/'); if (dmy.length === 3) {
+            let [dd, mm, yyyy] = dmy; dd=+dd; mm=+mm; yyyy=+yyyy;
+            if (isNaN(dd) || isNaN(mm) || isNaN(yyyy)) return null;
+            return new Date(yyyy, mm-1, dd);
+        }
+    }
+    return null;
+}
+
+// --- Linear regression function ---
+function linearRegression(x, y) {
+    const n = x.length;
+    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+    
+    for (let i = 0; i < n; i++) {
+        sumX += x[i];
+        sumY += y[i];
+        sumXY += x[i] * y[i];
+        sumX2 += x[i] * x[i];
+    }
+    
+    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+    
+    return { slope, intercept };
+}
+
+// --- Seasonal plot with enhanced features ---
+function plotSeasonal(data, selectedSeason = 0) {
+    let seas_series = Array.from({length:4}, () => ({}));
+    data.forEach(row => {
+        let dt = parseFlexibleDate(row[0]), v = parseFloat(row[1]);
+        if (!dt || isNaN(v)) return;
+        let y = dt.getFullYear(), m = dt.getMonth()+1; // 1-based
+        seasonMonths.forEach((months, i) => {
+            if (months.includes(m)) {
+                let year = (m==12 && i==3) ? y+1 : y; // Dec counts towards "next" winter
+                if (!seas_series[i][year]) seas_series[i][year] = [];
+                seas_series[i][year].push(v);
+            }
+        });
+    });
+    
+    // Get data for selected season
+    let years = [], values = [];
+    Object.keys(seas_series[selectedSeason]).sort().forEach(yr => {
+        const year = +yr;
+        // Apply year filter
+        if (year >= yearFilter.start && year <= yearFilter.end) {
+            years.push(year); 
+            let vals = seas_series[selectedSeason][yr];
+            values.push(vals.reduce((a,b)=>a+b,0)/vals.length);
+        }
+    });
+    
+    let traces = [];
+    
+    // Main data trace
+    if (document.getElementById('show-data-points').checked) {
+        traces.push({
+            x: years, 
+            y: values, 
+            mode: 'lines+markers', 
+            name: seasons[selectedSeason],
+            line: { color: seasonColors[selectedSeason], width: 3 },
+            marker: { size: 4, color: seasonColors[selectedSeason] }
+        });
+    } else {
+        traces.push({
+            x: years, 
+            y: values, 
+            mode: 'lines', 
+            name: seasons[selectedSeason],
+            line: { color: seasonColors[selectedSeason], width: 3 }
+        });
+    }
+    
+    // Trend line
+    if (document.getElementById('show-trend').checked && years.length > 1) {
+        const { slope, intercept } = linearRegression(years, values);
+        const trendY = years.map(x => slope * x + intercept);
+        
+        traces.push({
+            x: years,
+            y: trendY,
+            mode: 'lines',
+            name: 'Trend Line',
+            line: { color: 'red', width: 2, dash: 'dash' },
+            showlegend: true
+        });
+    }
+    
+    // Max and min year markers
+    if (document.getElementById('show-extremes').checked && values.length > 0) {
+        const maxIndex = values.indexOf(Math.max(...values));
+        const minIndex = values.indexOf(Math.min(...values));
+        
+        traces.push({
+            x: [years[maxIndex]],
+            y: [values[maxIndex]],
+            mode: 'markers',
+            name: 'Warmest Year',
+            marker: { 
+                color: 'orange', 
+                size: 10, 
+                symbol: 'star',
+                line: { color: 'black', width: 1 }
+            },
+            showlegend: true
+        });
+        
+        traces.push({
+            x: [years[minIndex]],
+            y: [values[minIndex]],
+            mode: 'markers',
+            name: 'Coldest Year',
+            marker: { 
+                color: 'blue', 
+                size: 10, 
+                symbol: 'star',
+                line: { color: 'black', width: 1 }
+            },
+            showlegend: true
+        });
+    }
+    
+    let layout = {
+        title: `${seasons[selectedSeason]} Temperature Trends (${yearFilter.start}-${yearFilter.end})`,
+        xaxis: { title: 'Year', showgrid: true, zeroline: false },
+        yaxis: { title: 'Temperature (°C)', showgrid: true, zeroline: false },
+        height: 500,
+        margin: { l: 60, r: 30, t: 60, b: 60 },
+        hovermode: 'x unified',
+        showlegend: true
+    };
+    
+    Plotly.newPlot('cet-seasonal', traces, layout, {responsive: true});
+    
+    let curAnn = null;
+    document.getElementById('cet-seasonal').on('plotly_click', d => {
+        let pt = d.points[0], ann = {
+            x: pt.x, y: pt.y,
+            text: `<b>${pt.x}</b><br>${pt.y.toFixed(2)}°C`, 
+            showarrow: true,
+            font: {color: seasonColors[selectedSeason]}, 
+            arrowcolor: seasonColors[selectedSeason],
+            ax: 0, ay: -30, bgcolor: '#fff'
+        };
+        let updates = curAnn ? {annotations: []} : {};
+        Plotly.relayout('cet-seasonal', updates);
+        Plotly.relayout('cet-seasonal', {annotations: [ann]});
+        curAnn = ann;
+    });
+}
+
+// --- Load CSV and plot ---
+let currentDataset = 'MeanTempCET.csv';
+let currentSeason = 0;
+let allData = null;
+let yearFilter = { start: 1659, end: 2025 };
+
+function loadAndPlot() {
+    Papa.parse(currentDataset, {
+        download: true, header: false, skipEmptyLines: true,
+        complete: function(results) {
+            allData = results.data;
+            plotSeasonal(allData, currentSeason);
+        }
+    });
+}
+
+function applyYearFilter() {
+    yearFilter.start = parseInt(document.getElementById('year-start').value);
+    yearFilter.end = parseInt(document.getElementById('year-end').value);
+    if (allData) {
+        plotSeasonal(allData, currentSeason);
+    }
+}
+
+// Event listeners
+document.getElementById('dataset-select').addEventListener('change', e => {
+    currentDataset = e.target.value;
+    loadAndPlot();
+});
+
+document.getElementById('season-select').addEventListener('change', e => {
+    currentSeason = parseInt(e.target.value);
+    if (allData) {
+        plotSeasonal(allData, currentSeason);
+    }
+});
+
+// Add event listeners for checkboxes
+document.getElementById('show-trend').addEventListener('change', e => {
+    if (allData) {
+        plotSeasonal(allData, currentSeason);
+    }
+});
+
+document.getElementById('show-extremes').addEventListener('change', e => {
+    if (allData) {
+        plotSeasonal(allData, currentSeason);
+    }
+});
+
+document.getElementById('show-data-points').addEventListener('change', e => {
+    if (allData) {
+        plotSeasonal(allData, currentSeason);
+    }
+});
+
+document.getElementById('export-seasonal-btn').onclick = function() {
+    Plotly.downloadImage('cet-seasonal', {
+        format: 'png',
+        filename: `cet_${seasons[currentSeason].toLowerCase().replace(/[^a-z]/g, '')}_trends`,
+        height: 500, width: 1200, scale: 2
+    });
+};
+
+// Initial load
+loadAndPlot();
+</script>
+</body>
+</html> 
