@@ -614,4 +614,63 @@ button:hover {
   .analysis-grid {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
+}
+
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 12pt !important;
+    box-shadow: none !important;
+  }
+  .banner, .nav-bar, .dropdown, .feature-grid, .feature-card, .back-link, .btn-primary, .card-actions, .controls, .analysis-card .card-actions, .info-link, .source-link, .contact-info, .contact-item, .methodology-grid, .methodology-card, .feature-link {
+    display: none !important;
+  }
+  .container, .content-section, .overview-section, .info-section, .analysis-grid, .analysis-card, .insights-grid, .insight-item {
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #000 !important;
+    page-break-after: avoid;
+  }
+  a {
+    color: #000 !important;
+    text-decoration: underline !important;
+  }
+  img, svg {
+    filter: none !important;
+    box-shadow: none !important;
+    background: none !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+  .title-banner {
+    background: none !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  .analysis-card, .feature-card {
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  /* Avoid page breaks inside important sections */
+  .content-section, .analysis-card, .info-section {
+    page-break-inside: avoid;
+  }
+  /* Hide print buttons if added later */
+  .print-btn {
+    display: none !important;
+  }
 } 

@@ -43,4 +43,27 @@
 
 ---
 
-*WeatherArchives is best viewed on desktop. Mobile support and additional features are planned for future releases!* 
+*WeatherArchives is best viewed on desktop. Mobile support and additional features are planned for future releases!*
+
+## Changelog
+
+### v1.1 (Current)
+- Added printable styles for all visualization pages
+- Added a changelog page
+- Updated the logo on the 404 and "Coming Soon" pages
+
+### v1.0 – Initial Release
+- Temperature Analysis module with:
+  - Daily Extremes
+  - Monthly Averages
+  - Seasonal Patterns
+  - Annual Trends
+  - Year Comparison
+- Index and overview pages
+- About page with data sources and methodology
+- 404 Not Found page
+- Coming Soon placeholders for Precipitation, Sunshine, and Fun & Learning
+- Interactive charts with filtering and export
+- Responsive design and consistent branding
+
+_Future updates will be listed here as new versions are released._ 

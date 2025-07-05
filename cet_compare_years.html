@@ -202,6 +202,21 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
+
+@media print {
+  html, body {
+    zoom: 0.75 !important;
+    font-size: 10pt !important;
+  }
+  #cet-comparison {
+    display: none !important;
+  }
+  #cet-comparison-print-image {
+    display: block !important;
+    page-break-inside: avoid;
+    margin-bottom: 1em;
+  }
+}
 </style>
 </head>
 <body>
@@ -258,6 +273,9 @@
       <a href="about.html">References</a>
       <a href="about.html">Contact</a>
     </div>
+  </div>
+  <div class="nav-item">
+    <a href="changelog.html" class="nav-link">Changelog</a>
   </div>
 </nav>
 
@@ -380,10 +398,13 @@
       <button onclick="updateComparison()" class="btn-primary">Compare Years</button>
       <button onclick="clearComparison()" class="btn-secondary">Clear</button>
       <button id="export-comparison-btn" class="btn-primary">Download Image</button>
+      <button class="btn-primary print-btn" onclick="window.print()" style="margin-left: 0.5em;">Print Page</button>
+
     </div>
   </div>
 
   <div class="plot-container">
+    <div id="cet-comparison-print-image" style="display:none; text-align:center; margin-bottom:1em;"></div>
     <div id="cet-comparison"></div>
   </div>
 
@@ -948,6 +969,45 @@ document.getElementById('export-comparison-btn').onclick = function() {
         height: 500, width: 1200, scale: 2
     });
 };
+
+// Print-friendly Plotly static image
+function preparePlotlyPrint() {
+  var plot = document.getElementById('cet-comparison');
+  var printImageDiv = document.getElementById('cet-comparison-print-image');
+  if (plot && window.Plotly) {
+    Plotly.toImage(plot, {format: 'png', width: 900, height: 500}).then(function(url) {
+      printImageDiv.innerHTML = '<img src="' + url + '" style="max-width:100%;height:auto;">';
+      plot.style.display = 'none';
+      printImageDiv.style.display = 'block';
+    });
+  }
+}
+function restorePlotlyAfterPrint() {
+  var plot = document.getElementById('cet-comparison');
+  var printImageDiv = document.getElementById('cet-comparison-print-image');
+  if (plot && printImageDiv) {
+    plot.style.display = '';
+    printImageDiv.style.display = 'none';
+  }
+}
+if (window.matchMedia) {
+  window.matchMedia('print').addEventListener('change', function(mql) {
+    if (mql.matches) {
+      preparePlotlyPrint();
+    } else {
+      restorePlotlyAfterPrint();
+    }
+  });
+}
+window.addEventListener('beforeprint', preparePlotlyPrint);
+window.addEventListener('afterprint', restorePlotlyAfterPrint);
+window.addEventListener('focus', function() {
+  var printImageDiv = document.getElementById('cet-comparison-print-image');
+  if (printImageDiv && printImageDiv.style.display === 'block') {
+    restorePlotlyAfterPrint();
+    setTimeout(restorePlotlyAfterPrint, 100);
+  }
+});
 
 // Initial load
 loadData();

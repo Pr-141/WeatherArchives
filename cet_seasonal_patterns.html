@@ -68,6 +68,21 @@
   font-size: 0.9rem;
   color: #666;
 }
+
+@media print {
+  html, body {
+    zoom: 0.75 !important;
+    font-size: 10pt !important;
+  }
+  #cet-seasonal {
+    display: none !important;
+  }
+  #cet-seasonal-print-image {
+    display: block !important;
+    page-break-inside: avoid;
+    margin-bottom: 1em;
+  }
+}
 </style>
 </head>
 <body>
@@ -125,6 +140,9 @@
       <a href="about.html">Contact</a>
     </div>
   </div>
+  <div class="nav-item">
+    <a href="changelog.html" class="nav-link">Changelog</a>
+  </div>
 </nav>
 
 <div class="title-banner">
@@ -153,6 +171,7 @@
     </div>
     
     <button id="export-seasonal-btn">Download Image</button>
+    <button class="btn-primary print-btn" onclick="window.print()" style="margin-left: 0.5em;">Print Page</button>
   </div>
   
   <div class="controls">
@@ -181,6 +200,7 @@
   </div>
 
   <div class="plot-container">
+    <div id="cet-seasonal-print-image" style="display:none; text-align:center; margin-bottom:1em;"></div>
     <div id="cet-seasonal"></div>
   </div>
   
@@ -453,6 +473,45 @@ document.getElementById('export-seasonal-btn').onclick = function() {
 
 // Initial load
 loadAndPlot();
+
+// Print-friendly Plotly static image
+function preparePlotlyPrint() {
+  var plot = document.getElementById('cet-seasonal');
+  var printImageDiv = document.getElementById('cet-seasonal-print-image');
+  if (plot && window.Plotly) {
+    Plotly.toImage(plot, {format: 'png', width: 900, height: 500}).then(function(url) {
+      printImageDiv.innerHTML = '<img src="' + url + '" style="max-width:100%;height:auto;">';
+      plot.style.display = 'none';
+      printImageDiv.style.display = 'block';
+    });
+  }
+}
+function restorePlotlyAfterPrint() {
+  var plot = document.getElementById('cet-seasonal');
+  var printImageDiv = document.getElementById('cet-seasonal-print-image');
+  if (plot && printImageDiv) {
+    plot.style.display = '';
+    printImageDiv.style.display = 'none';
+  }
+}
+if (window.matchMedia) {
+  window.matchMedia('print').addEventListener('change', function(mql) {
+    if (mql.matches) {
+      preparePlotlyPrint();
+    } else {
+      restorePlotlyAfterPrint();
+    }
+  });
+}
+window.addEventListener('beforeprint', preparePlotlyPrint);
+window.addEventListener('afterprint', restorePlotlyAfterPrint);
+window.addEventListener('focus', function() {
+  var printImageDiv = document.getElementById('cet-seasonal-print-image');
+  if (printImageDiv && printImageDiv.style.display === 'block') {
+    restorePlotlyAfterPrint();
+    setTimeout(restorePlotlyAfterPrint, 100);
+  }
+});
 </script>
 </body>
 </html> 
