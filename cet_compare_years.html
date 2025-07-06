@@ -240,12 +240,15 @@
   </div>
   
   <div class="nav-item">
-    <a href="wip.html" class="nav-link">Precipitation</a>
+    <a href="precipitation.html" class="nav-link">Precipitation</a>
     <div class="dropdown">
-      <a href="wip.html">Monthly Totals</a>
-      <a href="wip.html">Seasonal Totals</a>
-      <a href="wip.html">Yearly Totals</a>
+      <a href="precipitation.html">Overview</a>
+      <a href="wip.html">Daily Totals</a>
+      <a href="ewp_monthly_totals.html">Monthly Totals</a>
+      <a href="ewp_seasonal_totals.html">Seasonal Totals</a>
+      <a href="ewp_yearly_totals.html">Yearly Totals</a>
       <a href="wip.html">Compare Years</a>
+      <a href="wip.html">Average Precipitation</a>
     </div>
   </div>
   
@@ -280,8 +283,9 @@
 </nav>
 
 <div class="title-banner">
-  <h1>Central England Temperature Year Comparison</h1>
-  <p>Compare temperature patterns across different years and time periods</p>
+  <h1>Central England Temperature Year Comparison Tool</h1>
+  <p>Compare temperature patterns across different years with interactive visualizations</p>
+  <p style="font-size: 0.8em; margin-top: 0.5rem; opacity: 0.8;">Data source: UK Met Office Hadley Centre | <span id="last-updated">Loading data freshness...</span></p>
 </div>
 
 <div class="container">
@@ -390,8 +394,8 @@
       <div class="control-group">
         <label>Dataset:</label>
         <select id="dataset-select">
-          <option value="MeanTempCET.csv">Mean Temperature</option>
-          <option value="MaxTempCET.csv">Maximum Temperature</option>
+          <option value="meantemp">Mean Temperature</option>
+          <option value="maxtemp">Maximum Temperature</option>
         </select>
       </div>
       
@@ -482,17 +486,29 @@
 
 <script>
 // Global variables
-let currentDataset = 'MeanTempCET.csv';
+let currentDataset = 'meantemp'; // 'meantemp' or 'maxtemp'
 let allData = null;
 let comparisonType = 'annual';
 
-// Load CSV data
+// Load data from local CSV files (with option for future remote updates)
 function loadData() {
-    Papa.parse(currentDataset, {
+    const localFiles = {
+        'meantemp': 'MeanTempCET.csv',
+        'maxtemp': 'MaxTempCET.csv'
+    };
+    
+    const localFile = localFiles[currentDataset];
+    
+    Papa.parse(localFile, {
         download: true, header: false, skipEmptyLines: false,
         complete: function(results) {
             allData = results.data.filter(row => row.length >= 2 && row[0] && row[1] !== undefined);
+            console.log(`Loaded ${allData.length} data points from local file`);
             updateComparison();
+        },
+        error: function(error) {
+            console.error('Error loading data:', error);
+            alert('Error loading temperature data. Please refresh the page.');
         }
     });
 }
@@ -1013,7 +1029,21 @@ window.addEventListener('focus', function() {
   }
 });
 
+// Load data freshness
+function loadDataFreshness() {
+    fetch('data_last_updated.txt')
+        .then(response => response.text())
+        .then(data => {
+            const lastUpdated = data.trim();
+            document.getElementById('last-updated').textContent = `Last updated: ${lastUpdated}`;
+        })
+        .catch(error => {
+            document.getElementById('last-updated').textContent = 'Data freshness unavailable';
+        });
+}
+
 // Initial load
+loadDataFreshness();
 loadData();
 </script>
 </body>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Precipitation Analysis - WeatherArchives</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="banner">
+  <a href="index.html">
+    <img src="logo.svg" alt="WeatherArchives Logo" class="banner-logo">
+  </a>
+</div>
+
+<nav class="nav-bar">
+  <div class="nav-item">
+    <a href="temperature.html" class="nav-link">Temperature</a>
+    <div class="dropdown">
+      <a href="temperature.html">Overview</a>
+      <a href="cet_mean_daily_extremes.html">Daily Extremes</a>
+      <a href="cet_monthly_averages.html">Monthly Averages</a>
+      <a href="cet_seasonal_patterns.html">Seasonal Patterns</a>
+      <a href="cet_yearly_trends.html">Yearly Trends</a>
+      <a href="cet_compare_years.html">Compare Years</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="precipitation.html" class="nav-link">Precipitation</a>
+    <div class="dropdown">
+      <a href="precipitation.html">Overview</a>
+      <a href="wip.html">Daily Totals</a>
+      <a href="ewp_monthly_totals.html">Monthly Totals</a>
+      <a href="ewp_seasonal_totals.html">Seasonal Totals</a>
+      <a href="ewp_yearly_totals.html">Yearly Totals</a>
+      <a href="wip.html">Compare Years</a>
+      <a href="wip.html">Average Precipitation</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Sunshine</a>
+    <div class="dropdown">
+      <a href="wip.html">Monthly Hours</a>
+      <a href="wip.html">Seasonal Hours</a>
+      <a href="wip.html">Yearly Totals</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="wip.html" class="nav-link">Fun & Learning</a>
+    <div class="dropdown">
+      <a href="wip.html">Creating your own weather forecast</a>
+    </div>
+  </div>
+  
+  <div class="nav-item">
+    <a href="about.html" class="nav-link">About</a>
+    <div class="dropdown">
+      <a href="about.html">Data Sources</a>
+      <a href="about.html">Methodology</a>
+      <a href="about.html">References</a>
+      <a href="about.html">Contact</a>
+    </div>
+  </div>
+  <div class="nav-item">
+    <a href="changelog.html" class="nav-link">Changelog</a>
+  </div>
+</nav>
+
+<div class="title-banner">
+  <h1>Precipitation Analysis</h1>
+  <p>Comprehensive analysis of England & Wales Precipitation data from 1931 to present</p>
+  <p style="font-size: 0.8em; margin-top: 0.5rem; opacity: 0.8;">Data source: UK Met Office Hadley Centre | <span id="last-updated">Loading data freshness...</span></p>
+</div>
+
+<div class="container">
+  <div class="overview-section">
+    <h2>Understanding Precipitation Patterns</h2>
+    <p>Precipitation is a crucial climate variable that affects agriculture, water resources, and daily life. The England & Wales Precipitation (EWP) record provides valuable insights into rainfall patterns and variability over time. Our analysis tools allow you to explore precipitation patterns at different time scales, from daily extremes to long-term trends.</p>
+  </div>
+
+  <div class="info-section">
+    <h3>Why England & Wales Precipitation?</h3>
+    <p>The EWP record is particularly valuable because:</p>
+    <ul>
+      <li><strong>Long-term perspective:</strong> Over 90 years of continuous data provides context for current climate changes</li>
+      <li><strong>Geographic coverage:</strong> England & Wales represents a significant portion of the UK with diverse rainfall patterns</li>
+      <li><strong>Data quality:</strong> Carefully maintained and quality-controlled measurements from multiple weather stations</li>
+      <li><strong>Climate research:</strong> Widely used by scientists to study rainfall variability and climate change impacts</li>
+    </ul>
+  </div>
+
+  <div class="info-section">
+    <h3>Interactive Features</h3>
+    <p>Our visualizations include:</p>
+    <ul>
+      <li><strong>Interactive charts:</strong> Click on data points for detailed information</li>
+      <li><strong>Year range filtering:</strong> Focus on specific time periods of interest</li>
+      <li><strong>Trend analysis:</strong> Linear regression lines to identify long-term patterns</li>
+      <li><strong>Extreme value highlighting:</strong> Automatically identify record-breaking years</li>
+      <li><strong>Export capabilities:</strong> Download high-resolution images for presentations or reports</li>
+    </ul>
+  </div>
+
+  <div class="analysis-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="analysis-card">
+      <div class="card-header">
+        <h3>📊 Daily Totals</h3>
+        <span class="card-subtitle">Bar chart of chosen month/season</span>
+      </div>
+      <div class="card-content">
+        <p>Visualize daily rainfall totals as bar charts for a specific month or season of your chosen year. See the day-by-day precipitation patterns and identify wet and dry periods.</p>
+        <ul class="feature-list">
+          <li>Select specific month or season</li>
+          <li>Choose any year from 1931 to present</li>
+          <li>Bar chart visualization</li>
+          <li>Export high-resolution images</li>
+        </ul>
+      </div>
+      <div class="card-actions">
+        <a href="wip.html" class="btn-primary">Explore Daily Totals</a>
+      </div>
+    </div>
+
+    <div class="analysis-card">
+      <div class="card-header">
+        <h3>📈 Monthly Totals</h3>
+        <span class="card-subtitle">Rainfall of particular month over time</span>
+      </div>
+      <div class="card-content">
+        <p>Analyze how rainfall for a specific month has changed over time. Select any month and see how its rainfall totals have varied across different years and decades.</p>
+        <ul class="feature-list">
+          <li>Month-by-month analysis</li>
+          <li>Trend line visualization</li>
+          <li>Year range filtering</li>
+          <li>Extreme year highlighting</li>
+        </ul>
+      </div>
+      <div class="card-actions">
+        <a href="ewp_monthly_totals.html" class="btn-primary">Explore Monthly Totals</a>
+      </div>
+    </div>
+
+    <div class="analysis-card">
+      <div class="card-header">
+        <h3>🌱 Seasonal Totals</h3>
+        <span class="card-subtitle">Seasonal rainfall over time</span>
+      </div>
+      <div class="card-content">
+        <p>Compare seasonal rainfall totals across different years. This analysis focuses on how spring, summer, autumn, and winter rainfall has evolved over the decades.</p>
+        <ul class="feature-list">
+          <li>Season-by-season analysis</li>
+          <li>Long-term seasonal trends</li>
+          <li>Interactive season selection</li>
+          <li>Climate change indicators</li>
+        </ul>
+      </div>
+      <div class="card-actions">
+        <a href="ewp_seasonal_totals.html" class="btn-primary">Explore Seasonal Totals</a>
+      </div>
+    </div>
+
+    <div class="analysis-card">
+      <div class="card-header">
+        <h3>📊 Yearly Totals</h3>
+        <span class="card-subtitle">Annual rainfall over time</span>
+      </div>
+      <div class="card-content">
+        <p>Examine the long-term trajectory of annual rainfall totals. This comprehensive view shows how yearly precipitation has changed over the entire dataset, providing insights into climate change.</p>
+        <ul class="feature-list">
+          <li>Annual rainfall trends</li>
+          <li>Linear regression analysis</li>
+          <li>Record year identification</li>
+          <li>Climate change detection</li>
+        </ul>
+      </div>
+      <div class="card-actions">
+        <a href="ewp_yearly_totals.html" class="btn-primary">Explore Yearly Totals</a>
+      </div>
+    </div>
+
+    <div class="analysis-card">
+      <div class="card-header">
+        <h3>🔍 Compare Years</h3>
+        <span class="card-subtitle">Compare cumulative rainfall patterns</span>
+      </div>
+      <div class="card-content">
+        <p>Compare cumulative rainfall patterns across two or more years with interactive visualizations. Analyze annual, monthly, seasonal, or daily patterns to identify climate trends and anomalies.</p>
+        <ul class="feature-list">
+          <li>Multi-year comparisons</li>
+          <li>Cumulative pattern analysis</li>
+          <li>Interactive charts</li>
+          <li>Difference calculations</li>
+        </ul>
+      </div>
+      <div class="card-actions">
+        <a href="wip.html" class="btn-primary">Compare Years</a>
+      </div>
+    </div>
+
+    <div class="analysis-card">
+      <div class="card-header">
+        <h3>📊 Average Precipitation</h3>
+        <span class="card-subtitle">Average precipitation by month/season</span>
+      </div>
+      <div class="card-content">
+        <p>Shows the average precipitation level for each month or season of the year. Understand typical rainfall patterns and identify which months are typically wettest or driest.</p>
+        <ul class="feature-list">
+          <li>Monthly averages</li>
+          <li>Seasonal averages</li>
+          <li>Historical normals</li>
+          <li>Pattern identification</li>
+        </ul>
+      </div>
+      <div class="card-actions">
+        <a href="wip.html" class="btn-primary">Explore Average Precipitation</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h3>Key Insights from Precipitation Data</h3>
+    <div class="insights-grid">
+      <div class="insight-item">
+        <h4>🌧️ Rainfall Variability</h4>
+        <p>The EWP record shows significant day-to-day and year-to-year variability in rainfall, with some days receiving over 50mm while others remain completely dry.</p>
+      </div>
+      <div class="insight-item">
+        <h4>📈 Seasonal Patterns</h4>
+        <p>Clear seasonal patterns emerge, with autumn and winter typically being the wettest seasons, while spring and summer are generally drier.</p>
+      </div>
+      <div class="insight-item">
+        <h4>🌍 Climate Context</h4>
+        <p>England & Wales precipitation patterns are influenced by Atlantic weather systems, making them sensitive to broader climate changes affecting the North Atlantic region.</p>
+      </div>
+      <div class="insight-item">
+        <h4>📊 Data Quality</h4>
+        <p>The EWP record combines data from multiple weather stations across England & Wales, providing a representative sample of regional rainfall patterns.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h3>How to Use These Tools</h3>
+    <p>Each visualization offers different perspectives on precipitation patterns:</p>
+    <ul>
+      <li><strong>Start with Daily Extremes</strong> to understand the range of rainfall experienced throughout the year</li>
+      <li><strong>Use Monthly Totals</strong> to see how specific months have changed over time</li>
+      <li><strong>Explore Seasonal Patterns</strong> to understand how seasons have evolved</li>
+      <li><strong>Examine Annual Trends</strong> for the big picture of long-term climate change</li>
+    </ul>
+    <p>All tools include interactive features like year range filtering, trend lines, and export capabilities to help you analyze the data in detail.</p>
+  </div>
+
+  <div class="info-section">
+    <h3>Getting Started</h3>
+    <p>Begin your exploration by:</p>
+    <ol>
+      <li><strong>Daily Extremes:</strong> See which years set rainfall records for each day</li>
+      <li><strong>Monthly Totals:</strong> Compare how monthly rainfall has changed over time</li>
+      <li><strong>Seasonal Patterns:</strong> Analyze how seasons have evolved across decades</li>
+      <li><strong>Annual Trends:</strong> Examine the long-term climate trajectory</li>
+      <li><strong>Compare Years:</strong> Side-by-side analysis of different years</li>
+    </ol>
+    <p>Each visualization offers different insights into our rainfall history. Use the navigation menu above to explore different aspects of the precipitation record.</p>
+  </div>
+
+  <div class="info-section">
+    <h3>Data Sources & Methodology</h3>
+    <p>This website uses the official England & Wales Precipitation dataset, maintained by the UK Met Office. The data represents area-averaged rainfall for England & Wales, providing a representative sample of the region's precipitation patterns.</p>
+    <p><a href="about.html" class="info-link">Learn more about our data sources and methodology →</a></p>
+  </div>
+</div>
+
+<script>
+// Load data freshness
+function loadDataFreshness() {
+    fetch('data_last_updated.txt')
+        .then(response => response.text())
+        .then(data => {
+            const lastUpdated = data.trim();
+            document.getElementById('last-updated').textContent = `Last updated: ${lastUpdated}`;
+        })
+        .catch(error => {
+            document.getElementById('last-updated').textContent = 'Data freshness unavailable';
+        });
+}
+
+// Add interactive elements
+document.addEventListener('DOMContentLoaded', function() {
+  // Load data freshness
+  loadDataFreshness();
+  
+  // Add hover effects to analysis cards
+  const analysisCards = document.querySelectorAll('.analysis-card');
+  analysisCards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-5px)';
+      this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
+    });
+  });
+});
+</script>
+
+</body>
+</html> 

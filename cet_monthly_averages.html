@@ -118,12 +118,15 @@
   </div>
   
   <div class="nav-item">
-    <a href="wip.html" class="nav-link">Precipitation</a>
+    <a href="precipitation.html" class="nav-link">Precipitation</a>
     <div class="dropdown">
-      <a href="wip.html">Monthly Totals</a>
-      <a href="wip.html">Seasonal Totals</a>
-      <a href="wip.html">Yearly Totals</a>
+      <a href="precipitation.html">Overview</a>
+      <a href="wip.html">Daily Totals</a>
+      <a href="ewp_monthly_totals.html">Monthly Totals</a>
+      <a href="ewp_seasonal_totals.html">Seasonal Totals</a>
+      <a href="ewp_yearly_totals.html">Yearly Totals</a>
       <a href="wip.html">Compare Years</a>
+      <a href="wip.html">Average Precipitation</a>
     </div>
   </div>
   
@@ -160,6 +163,7 @@
 <div class="title-banner">
   <h1>Central England Temperature Monthly Averages</h1>
   <p>Explore monthly and seasonal temperature trends over time</p>
+  <p style="font-size: 0.8em; margin-top: 0.5rem; opacity: 0.8;">Data source: UK Met Office Hadley Centre | <span id="last-updated">Loading data freshness...</span></p>
 </div>
 
 <div class="container">
@@ -495,7 +499,21 @@ window.addEventListener('focus', function() {
   }
 });
 
+// Load data freshness
+function loadDataFreshness() {
+    fetch('data_last_updated.txt')
+        .then(response => response.text())
+        .then(data => {
+            const lastUpdated = data.trim();
+            document.getElementById('last-updated').textContent = `Last updated: ${lastUpdated}`;
+        })
+        .catch(error => {
+            document.getElementById('last-updated').textContent = 'Data freshness unavailable';
+        });
+}
+
 // Initial load
+loadDataFreshness();
 loadAndPlot();
 </script>
 </body>
