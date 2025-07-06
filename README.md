@@ -24,6 +24,18 @@
 3. No build step or backend required—everything runs client-side.
 4. For best experience, use a modern desktop browser. (Mobile support coming soon!)
 
+## Automated Data Updates
+This project uses GitHub Actions to automatically update temperature data from the Met Office:
+- **Daily updates:** Runs every day at 2 AM UTC
+- **Manual triggers:** Can be triggered manually via GitHub Actions tab
+- **Data freshness:** All temperature pages show when data was last updated
+- **Automatic commits:** Changes are automatically committed and pushed to the repository
+
+The workflow downloads fresh data from:
+- Mean temperature: `https://www.metoffice.gov.uk/hadobs/hadcet/data/meantemp_daily_totals.txt`
+- Maximum temperature: `https://www.metoffice.gov.uk/hadobs/hadcet/data/maxtemp_daily_totals.txt`
+- Precipitation: `https://www.metoffice.gov.uk/hadobs/hadukp/data/daily/HadEWP_daily_totals.txt`
+
 ## File Structure
 - `index.html` — Home/landing page
 - `temperature.html` — Temperature analysis overview
@@ -35,7 +47,8 @@
 - `about.html` — Data sources, methodology, and contact
 - `style.css` — Main stylesheet
 - `logo.svg` — Project logo
-- `MeanTempCET.csv`, `MaxTempCET.csv` — CET data files
+- `MeanTempCET.csv`, `MaxTempCET.csv` — CET temperature data files
+- `PrecipitationEWP.csv` — England & Wales precipitation data file
 
 ## Credits & Contact
 - Data from the UK Met Office Hadley Centre.
@@ -47,7 +60,23 @@
 
 ## Changelog
 
-### v1.2 (Current)
+### v1.3 (Current)
+- Added automated data updates via GitHub Actions:
+  - Daily automatic downloads from Met Office data sources
+  - Automatic CSV file updates with fresh temperature and precipitation data
+  - Data freshness indicators on all temperature pages
+- Added precipitation data support:
+  - England & Wales precipitation data from Met Office HadUKP dataset
+  - Daily precipitation totals from 1931 to present
+  - Automatic updates via GitHub Actions workflow
+- Updated the navigation bar to include the new precipitation pages
+- Tweaked the Seasonal Patterns page to include a description of the seasonal patterns
+- Updated the About page:
+  - to include the GitHub Actions process
+  - to include the data source for the precipitation data
+  - to correct coverage years in the CET data
+
+### v1.2
 - Bugfixes:
   - Fixed error in email in "About"
   - Fixed error where Year Comparison fails when a temperature value is zero.

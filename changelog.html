@@ -27,12 +27,15 @@
   </div>
   
   <div class="nav-item">
-    <a href="wip.html" class="nav-link">Precipitation</a>
+    <a href="precipitation.html" class="nav-link">Precipitation</a>
     <div class="dropdown">
-      <a href="wip.html">Monthly Totals</a>
-      <a href="wip.html">Seasonal Totals</a>
-      <a href="wip.html">Yearly Totals</a>
+      <a href="precipitation.html">Overview</a>
+      <a href="wip.html">Daily Totals</a>
+      <a href="ewp_monthly_totals.html">Monthly Totals</a>
+      <a href="ewp_seasonal_totals.html">Seasonal Totals</a>
+      <a href="ewp_yearly_totals.html">Yearly Totals</a>
       <a href="wip.html">Compare Years</a>
+      <a href="wip.html">Average Precipitation</a>
     </div>
   </div>
   
@@ -73,7 +76,36 @@
 
 <div class="container">
   <div class="content-section">
-    <h2>WeatherArchives v1.2 <span style="font-size:0.8em; color:#888;">(Current)</span></h2>
+    <h2>WeatherArchives v1.3 <span style="font-size:0.8em; color:#888;">(Current)</span></h2>
+    <p style="font-size:0.8em; color:#888; margin-top:-0.5em; margin-bottom:1em;">(released 6 Jul 2025)</p>
+    <ul>
+      <li>Added automated data updates via GitHub Actions:
+        <ul>
+          <li>Daily automatic downloads from Met Office data sources</li>
+          <li>Automatic CSV file updates with fresh temperature and precipitation data</li>
+          <li>Data freshness indicators on all temperature pages</li>
+        </ul>
+      </li>
+      <li>Added precipitation data support:
+        <ul>
+          <li>England & Wales precipitation data from Met Office HadUKP dataset</li>
+          <li>Daily precipitation totals from 1931 to present</li>
+          <li>Automatic updates via GitHub Actions workflow</li>
+        </ul>
+      </li>
+      <li>Updated the navigation bar to include the new precipitation pages</li>
+      <li>Tweaked the Seasonal Patterns page to include a description of the seasonal patterns</li>
+      <li>Updated the About page:</li>
+        <ul>
+          <li>to include the GitHub Actions process</li>
+          <li>to include the data source for the precipitation data</li>
+          <li>to correct coverage years in the CET data</li>
+        </ul>
+    </ul>
+  </div>
+
+  <div class="content-section">
+    <h2>WeatherArchives v1.2</h2>
     <p style="font-size:0.8em; color:#888; margin-top:-0.5em; margin-bottom:1em;">(released 5 Jul 2025)</p>
     <ul>
       <li>Bugfixes:
