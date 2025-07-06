@@ -1,0 +1,87 @@
+name: Update Temperature Data
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Download and update weather data
+      run: |
+        python -c "
+        import urllib.request
+        import csv
+        import datetime
+        
+        # URLs for Met Office data
+        urls = {
+            'meantemp': 'https://www.metoffice.gov.uk/hadobs/hadcet/data/meantemp_daily_totals.txt',
+            'maxtemp': 'https://www.metoffice.gov.uk/hadobs/hadcet/data/maxtemp_daily_totals.txt',
+            'precipitation': 'https://www.metoffice.gov.uk/hadobs/hadukp/data/daily/HadEWP_daily_totals.txt'
+        }
+        
+        # Download and convert each dataset
+        for data_type, url in urls.items():
+            print(f'Downloading {data_type} data...')
+            
+            # Download data
+            response = urllib.request.urlopen(url)
+            data = response.read().decode('utf-8')
+            
+            # Parse the data
+            lines = data.strip().split('\n')
+            parsed_data = []
+            
+            # Skip header lines and parse data
+            for line in lines:
+                # Skip empty lines and header lines
+                if not line.strip() or line.startswith('Daily') or line.startswith('Alexander') or line.startswith('Date'):
+                    continue
+                
+                parts = line.strip().split()
+                if len(parts) >= 2:
+                    date = parts[0]
+                    value = float(parts[1])
+                    parsed_data.append([date, value])
+            
+            # Write to CSV file
+            if data_type == 'precipitation':
+                csv_filename = 'PrecipitationEWP.csv'
+            else:
+                csv_filename = f'{data_type.capitalize()}TempCET.csv'
+            
+            with open(csv_filename, 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow(['Date', 'Value'])  # Header
+                for row in parsed_data:
+                    writer.writerow(row)
+            
+            print(f'Updated {csv_filename} with {len(parsed_data)} records')
+        
+        # Create a timestamp file
+        with open('data_last_updated.txt', 'w') as f:
+            f.write(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC'))
+        
+        print('Data update completed successfully!')
+        "
+        
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add MeanTempCET.csv MaxTempCET.csv PrecipitationEWP.csv data_last_updated.txt
+        git diff --quiet && git diff --staged --quiet || git commit -m "Update weather data from Met Office [skip ci]"
+        git push 
